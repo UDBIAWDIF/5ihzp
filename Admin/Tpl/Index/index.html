@@ -1,0 +1,19 @@
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$charset}">
+<title>{$Think.config.app_name}</title>
+</head>
+	<frameset rows="105,*" cols="*" frameborder="no" border="0" framespacing="0" >
+		<frame src="__APP__/Menu/topmenu" name="mcTopFrame" id="mcTopFrame" scrolling="no" noresize>
+		<frameset cols="206,*" name="mcBodyFrame" id="mcBodyFrame" frameborder="no" border="0" framespacing="0"  >
+			<frame src="__APP__/Menu/menu/action/" name="mcMenuFrame" id="mcMenuFrame" scrolling="no" noresize>
+			<frame src="#" name="mcMainFrame" id="mcMainFrame" scrolling="auto" noresize>
+		</frameset>
+	</frameset>
+	
+	<volist name="list" id="vo">
+		<php></php>
+	</volist>
+	<noframes>
+		<body>很遗憾，你的浏览器不支持框架。</body>
+	</noframes>
+</html>

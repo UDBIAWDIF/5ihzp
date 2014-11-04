@@ -1,0 +1,66 @@
+<include file="Public:header" />
+
+	<div id="table" >
+		<form action="<empty name='vo.sh_cg_id'>__URL__/doAdd<else />__URL__/doEdit</empty>" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr>
+			  <td width="20%">分类名称：</td>
+			  <td ><input name="sh_cg_name" type="text" value="{$vo.sh_cg_name}" size="50"/>*</td>
+
+			</tr>
+			<tr>
+			  <td width="20%">分类描述：</td>
+			  <td>
+				<textarea id="sh_cg_detail" name="sh_cg_detail" style="width:620px;" >{$vo.sh_cg_detail}</textarea>
+
+			</tr>
+			<tr>
+			  <td width="20%">排 序：</td>
+			  <td><input name="sh_cg_order" type="text" value="{$vo.sh_cg_order}" size="10"/></td>
+
+			</tr>
+			<tr>
+			  <td>父分类：</td>
+			  <td>
+					<select name="sh_cg_parid" id="select">
+						<option value="0">无</option>
+						{:genCgTree($cglist,'sh',$vo,$_GET['id'])}
+
+					</select>
+				</td>
+			</tr>
+			<tr>
+			  <td>是否生效：</td>
+			  <td>
+					<input type="radio" name="sh_cg_status" value="1" <eq name="vo.sh_cg_status" value="1">checked</eq>/>生效
+					<input type="radio" name="sh_cg_status" value="0" <eq name="vo.sh_cg_status" value="0">checked</eq>/>失效
+
+				</td>
+			</tr>	
+			<tr>
+				<td colspan="2" align="center">	
+					<input type="hidden" name="sh_cg_id" value="{$vo.sh_cg_id}"/>
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+					<input type="submit" class="btn btn-primary"  name="Submit" value="确定<empty name='vo.sh_cg_id'>添加<else />修改</empty>" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />

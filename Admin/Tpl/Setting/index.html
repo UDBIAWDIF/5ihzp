@@ -1,0 +1,81 @@
+<include file="Public:header" />
+
+		<div id="toolbar" class="clearfix">
+			<div class="items first">
+			<div class="btn-group">
+				<a class="btn" href="__URL__/index">全部</a>
+				<volist name="modules" id="vo">
+				<a class="btn" href="{:U('Setting/index',array('module'=>$vo['module']))}">{$vo.module}</a>
+				</volist>
+			</div>
+			</div>
+			<!--
+			<div class="items first">
+				<form method="get" action="__URL__/index" id="list-filter">
+				<p class="search-box">
+					<input type="text" value="" name="key" class="post-search-input">
+					<input type="submit" class="btn" value="搜索">
+				</p>
+				</form>
+			</div>
+			-->
+			<div class="items">
+				<input type="button" name="add" class="btn"  value="新增配置" onclick="javascript:window.location='__URL__/add/gid/{.gid}'" />
+			</div>
+		</div>
+		<form action="__URL__/exec" method="post" class="form-horizontal">
+		<div id="table" class="fl">
+			<table cellspacing="0">
+			<thead>
+				<tr>
+					<th width="25" class="first"><input name="checkbox" type="checkbox" class="checkbox" id="selectAll" value="选择"></th>
+					<th width="20%">所属模块</th>
+					<th width="20%">配置标题</th>
+					<th>字段名</th>
+					<th width="10%">类型</th>
+					<th class="last">操作</th>
+				</tr>
+			</thead> 
+			<tbody class="grid">
+			<volist name="list" id="vo">
+				<tr ondblclick="window.location = '__URL__/detail/id/{$vo.id}'">
+					<td><input name="id[]" type="checkbox" id="id[]" value="{$vo.id}" class="checkbox"></td>
+					<td><span class="green">{$vo.module}</span></td>
+					<td>{$vo.title}</td>
+					<td>{$vo.name}</td>
+					<td>{$vo.type|getConfigValue="SETTING_INPUT_TYPE",###}</td>
+					<td>
+						<a href="__URL__/edit/id/{$vo.id}"><img src="../Public/images/edit-icon.gif" alt="Edit" title="编辑" /></a>
+						<a href="__URL__/exec/act/delete/id/{$vo.id}"  class="confirm"><img src="../Public/images/hr.gif" alt="Delete" title="删除" /></a>
+					</td>
+				</tr>
+			</volist>
+			</tbody>
+			<tfoot>
+				<tr class="last">
+					<td colspan="8">
+						<div class="fl">
+							<select name="act" class="input-small" >
+								<option value="none" selected>批量操作</option>
+								<option value="unlock">解锁</option>
+								<option value="lock">锁定</option>
+								<option value="delete">删除</option>
+							</select>
+							<input type="submit" value="提交操作" class="btn" id="submitButton" />
+						</div>
+						<div class="select green-black">
+							{$page}
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		</div>
+		</form>
+		<div id="ps">
+			<p>删除不可恢复,谨慎操作　必须有一个管理员，内置管理员不允许删除及修改管理组</p>
+		</div>
+		<div class="clear"></div>
+	</div>
+</div>
+<include file="Public:footer" />

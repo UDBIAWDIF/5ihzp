@@ -1,0 +1,61 @@
+﻿<include file="Public:manage_common" />
+					<li class="height24_24 radius cur000 tabli" id="liimgmanage"><label>照片管理</label></li>
+					<li class="height24_24 margintop10 radius tabli" id="ligroupmanage"><label><a href="{:U('Group/manage')}">组管理</a></label></li>
+				</ul>
+			</div>
+			<div class="imglist marginleft20 marginbottom10" style="width:710px;float:left;">
+				<ul id="ulimg">
+					<li class="margintopbottom10 bold">
+						<label class="marginright20">照片数：<span class="piccount">统计中...</span></label>
+						<label class="marginright20">评论：<span class="commentcount">统计中...</span></label>
+						<label>赞：<span class="thumbupcount">统计中...</span></label>
+						<a class="subadd floatright radius" href="{:U('User/addpicture')}">+&nbsp;上传图片</a>
+					</li>
+					<li class="margintopbottom10">{$pageNo}</li>
+					<li class="aligncenter imglisthead" style="overflow: hidden;">
+
+					<PHP>$piclist = $list;</PHP>
+					<volist name="piclist" id="pic">
+						<div class="alignleft width_160 floatleft margin8">
+							<p>
+								<img src="{$pic.pic_path|getImgUrlOnSite|getSmallImgUrl}" class="thisispic" width="150" commentcount="{$pic.pic_comment_count}" thumbupcount="{$pic.pic_thumbup_count}" />
+							</p>
+							<p><label class="floatright fontcolor4c9ed9">
+								<!-- a href="{:U('Pic/modify', array('id' => $pic['pic_id']))}">修改</a -->
+								<a class="marginleft10" href="{:U('Pic/delete', array('id' => $pic['pic_id']))}">删除</a>
+							</label></p>
+						</div>
+					</volist>
+
+					</li>
+				</ul>
+			</div>
+			<div class="page">{$page}</div>
+		</div>
+<include file="Public:aboutus" />
+	</div>
+<include file="Public:usermsg" />
+	<div id="dialogmodify" style="display: none;">
+		<iframe name='dialogmodify' src="{:U('User/modify')}" marginheight='0' frameborder='0' scrolling='no'
+				width='570' height='350'></iframe>
+	</div>
+<script type="text/javascript">
+	$(function() {
+		$('.piccount').text($('.thisispic').length);
+
+		var commentcount = 0;
+		$('.thisispic').each(function() {
+			commentcount += parseInt($(this).attr('commentcount'));
+		});
+		$('.commentcount').text(commentcount);
+
+
+		var thumbupcount = 0;
+		$('.thisispic').each(function() {
+			thumbupcount += parseInt($(this).attr('thumbupcount'));
+		});
+		$('.thumbupcount').text(thumbupcount);
+	});
+</script>
+</body>
+</html>

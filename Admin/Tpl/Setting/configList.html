@@ -1,0 +1,109 @@
+<include file="Public:header" />
+
+<div id="container">
+	<div id="header">
+    	<div class="title">配置列表</div>
+        <div class="operate">
+        </div>
+    </div>
+    <div id="content">
+		<div class="filter">
+			<form method="get" action="" id="list-filter">
+			<ul class="subsubsub">
+				<li><a class="current" href="__URL__/configList">全部 <span class="count"></span></a> |</li>
+				<volist name="modules" id="vo">
+				<li><a class="current" href="{:U('Setting/configList',array('module'=>$vo['module']))}">{$vo.module}</a> |</li>
+				</volist>
+			</ul>
+			</form>
+		
+		</div>
+		<div id="toolbar"  class="clearfix">
+			<div class="items first">
+				<form method="get" action="__URL__/configList" id="list-filter">
+				<p class="search-box">
+					<input type="text" value="" name="key" class="post-search-input">
+					<input type="submit" class="btn" value="搜索">
+				</p>
+				</form>
+			</div>
+			<div class="items">
+				<input type="button" name="add" class="btn"  value="新增配置" onclick="javascript:window.location='__URL__/add/gid/{.gid}'" />
+			</div>
+			
+		</div>
+		<form action="__URL__/exec" method="post">
+        <div id="table" class="fl">
+            <table cellspacing="0">
+            <thead>
+                <tr>
+                    <th width="25" class="first"><input name="checkbox" type="checkbox" class="checkbox" id="selectAll" value="选择"></th>
+                    <th width="20%">
+						<a href="__URL__/configList/gid/{$sortArray.id}/field/node/order/{$sortArray.order}/key/{$keyword}">
+							<span class="fl">所属模块</span>
+							<span class="sort <eq name="sortArray.field" value="module">{$sortArray.order}</eq>"></span>
+						</a>
+					</th>
+                    <th width="20%">
+						<a href="__URL__/configList/gid/{$sortArray.id}/field/title/order/{$sortArray.order}/key/{$keyword}">
+							<span class="fl">配置标题</span>
+							<span class="sort <eq name="sortArray.field" value="title">{$sortArray.order}</eq>"></span>
+						</a>
+					</th>
+                    <th><a href="__URL__/configList/gid/{$sortArray.id}/field/name/order/{$sortArray.order}/key/{$keyword}">
+							<span class="fl">字段名</span>
+							<span class="sort <eq name="sortArray.field" value="name">{$sortArray.order}</eq>"></span>
+						</a>
+					</th>
+                    <th width="10%">
+						<a href="__URL__/configList/gid/{$sortArray.id}/field/type/order/{$sortArray.order}/key/{$keyword}">
+							<span class="fl">类型</span>
+							<span class="sort <eq name="sortArray.field" value="type">{$sortArray.order}</eq>"></span>
+						</a>
+					</th>
+                    <th class="last">操作</th>
+                </tr>
+            </thead> 
+            <tbody class="grid">
+			<volist name="list" id="vo">
+                <tr ondblclick="window.location = '__URL__/detail/id/{$vo.id}'">
+                    <td><input name="id[]" type="checkbox" id="id[]" value="{$vo.id}" class="checkbox"></td>
+                    <td><span class="green">{$vo.module}</span></td>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.type|getConfigValue="SETTING_INPUT_TYPE",###}</td>
+                    <td>
+                    	<a href="__URL__/edit/id/{$vo.id}/gid/{.gid}"><img src="../Public/images/edit-icon.gif" alt="Edit" title="编辑" /></a>
+                    	<a href="__URL__/exec/act/delete/id/{$vo.id}"  class="confirm"><img src="../Public/images/hr.gif" alt="Delete" title="删除" /></a>						
+                    </td>
+                </tr>
+			</volist>
+            </tbody>
+			<tfoot>
+				<tr class="last">                
+					<td colspan="8">
+						<div class="fl">
+							<select name="act" class="input-small" >
+								<option value="none" selected>批量操作</option>
+								<option value="unlock">解锁</option>
+								<option value="lock">锁定</option>
+								<option value="delete">删除</option>
+							</select>
+							<input type="submit" value="提交操作" class="btn" id="submitButton" />
+						</div>
+						<div class="select green-black">
+							{$page}
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+            </table>
+        </div>
+		</form>
+        <div id="ps">
+        	<p>删除不可恢复,谨慎操作　必须有一个管理员，内置管理员不允许删除及修改管理组</p>
+        </div>
+		<div class="clear"></div>
+    </div>
+</div>
+<include file="Public:footer" />

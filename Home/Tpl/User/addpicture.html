@@ -1,0 +1,165 @@
+<include file="Public:head" />
+<style type="text/css">
+	html, body {
+		margin: 0;
+		padding: 0;
+	}
+
+	.iw_poi_title {
+		color: #CC5522;
+		font-size: 14px;
+		font-weight: bold;
+		overflow: hidden;
+		padding-right: 13px;
+		white-space: nowrap;
+	}
+
+	.iw_poi_content {
+		font: 12px arial,sans-serif;
+		overflow: visible;
+		padding-top: 4px;
+		white-space: -moz-pre-wrap;
+		word-wrap: break-word;
+	}
+</style>
+<link href="__PUBLIC__/Js/kindeditor/themes/default/default.css" rel="stylesheet" />
+<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=OgAufCYdHRO0k8xcceaqOLN4"></script>
+<!-- script type="text/javascript" src="http://api.map.baidu.com/api?key=&v=1.1&services=true"></script -->
+<script type="text/javascript">
+	var thisServerImgPre = '{$thisServerImgPre}';
+	KindEditor.ready(function (K) {
+		var uploadbutton = K.uploadbutton({
+			button: K('#uploadButton'),
+			fieldName: 'imgFile',
+			url: '{:u("User/addpicture")}',
+			beforeSubmit: loading,
+			afterUpload: function (data) {
+				tips.close();
+				if (data.error === 0) {
+					// var url = K.formatUrl(data.url, 'absolute');
+					var url = data.url;
+					K('#pic_path').val(url);
+					K('.camera').attr('src', realUrl(url));
+				} else {
+					alert(data.message);
+				}
+			},
+			afterError: function (str) {
+				alert('上传失败, 原因: ' + str);
+			}
+		});
+		uploadbutton.fileBox.change(function (e) {
+			uploadbutton.submit();
+		});
+	});
+
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if (position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function realUrl(url) {
+		url = url.toString();
+		if (!isUrl(url)) {
+			url = thisServerImgPre + url;
+		}
+		return url;
+	}
+
+	$(function () {
+		// 百度地图API功能
+		var map = new BMap.Map("baidumap"); // 创建Map实例
+		map.centerAndZoom("福州", 12); // 初始化地图,设置城市和地图级别。
+		// var point = new BMap.Point(119.303618, 26.116760);
+		// map.centerAndZoom(point, 15);
+		// var marker = new BMap.Marker(point); // 创建标注
+		// map.addOverlay(marker);
+		map.enableScrollWheelZoom();
+		map.addControl(new BMap.NavigationControl());
+		map.addControl(new BMap.MapTypeControl());
+		map.addControl(new BMap.ScaleControl());
+		map.addControl(new BMap.OverviewMapControl());
+		var gc = new BMap.Geocoder();
+		var marker = null;
+		map.addEventListener("click", function (e) {
+			var pt = e.point;
+
+			if (marker) {
+				map.removeOverlay(marker);
+			}
+			marker = new BMap.Marker(pt);
+			map.addOverlay(marker);
+
+			gc.getLocation(pt, function (rs) {
+				var addComp = rs.addressComponents;
+				var region_detail = addComp.province + "," + addComp.city + "," + addComp.district;
+				if (addComp.street) region_detail += "," + addComp.street;
+				if (addComp.streetNumber) region_detail += "," + addComp.streetNumber;
+				$('input[name="pic_region_detail"]').val(region_detail);
+				$('input[name="pic_region_longitude"]').val(pt.lng);
+				$('input[name="pic_region_latitude"]').val(pt.lat);
+				$('.region_detail').text(region_detail);
+			});
+		});
+	});
+
+</script>
+</head>
+<body>
+	<include file="Public:nav_top" />
+	<form id="form_login" class="ajaxForm" method="POST" action="{:U('Pic/addpicture')}" notip="1" jumpurl="{:U('Pic/manage')}">
+		<div class="bodydiv paddingtop20">
+			<div class="bordere0e0e0">
+				<ul class="paddingbottom30 paddingtop30">
+					<li class="" id="imgli">
+						<img src="__HOME__images/camera.png" class="camera" />
+						<input type="hidden" name="pic_path" id="pic_path" value="" />
+					</li>
+					<li><input type="button" id="uploadButton" value="选择上传图片" /></li>
+				</ul>
+			</div>
+			<div>
+				<ul>
+					<li class="margintop10 height50">
+						<label class="floatleft fontsize14">图片尺寸要求>400像素，高>300</label><label class="cancel floatright">删除</label><input class="sub floatright" id="btnSub" type="submit" value="提交" />
+					</li>
+				</ul>
+			</div>
+			<div>
+				<ul class="alignleft">
+					<li class="height40li fontsize14">照片信息</li>
+					<li class="height20 fontsize14 fontcolor007acc">地图位置：<span class="region_detail">未选点</span></li>
+					<input name="pic_region_longitude" type="hidden" value="" />
+					<input name="pic_region_latitude" type="hidden" value="" />
+					<input name="pic_region_detail" type="hidden" value="" />
+				</ul>
+				<ul class="floatleft alignleft" style="width: 550px;">
+					<li class="height20 fontsize14 fontcolor007acc">描述：</li>
+					<li class="height200">
+						<textarea name="pic_detail" id="pic_detail" class="ctextarea" rows="10" cols="60" placeholder="请填写"></textarea>
+					</li>
+					<li class="height20 fontsize14 fontcolor007acc">TAG：</li>
+					<li class="margintop10 chklist">
+						<volist name="pictaglist" id="pictag">
+							<input type="checkbox" name="pictag[]" value="{$pictag.pt_id}" /><label for="Checkbox1">{$pictag.pt_name}</label>
+						</volist>
+					</li>
+				</ul>
+				<ul class="floatleft alignleft marginbottom50" style="width: 300px;">
+					<li class="height20 fontsize14 fontcolor007acc">位置：</li>
+					<li class="margintop5">
+						<div style="width: 300px; height: 300px; border: #ccc solid 1px;" id="baidumap"></div>
+					</li>
+				</ul>
+			</div>
+			<include file="Public:aboutus" />
+		</div>
+	</form>
+

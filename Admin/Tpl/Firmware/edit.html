@@ -1,0 +1,63 @@
+<include file="Public:header" />
+
+	<div id="table" >
+		<form action="<empty name="vo.fw_id">__URL__/doAdd<else />__URL__/doEdit</empty>" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"><empty name="vo.fw_id">添加<else />编辑</empty>固件</th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			<tr>
+				<th width="20%">系统平台:</td>
+				<td width="80%">
+					<input type="radio" name="fw_os" id="fw_os" value="0" />不限
+					<volist name="osList" id="os">
+						&nbsp;&nbsp;<input type="radio" name="fw_os" id="fw_os" value="{$os.os_id}" <eq name="os.os_id" value="$vo['fw_os']">checked</eq> />{$os.os_name}
+					</volist>
+					<span id="fw_os_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">固件名称:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="fw_name" id="fw_name" type="text" value="{$vo.fw_name}"/>
+					<span id="fw_name_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">固件级别:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="fw_level" id="fw_level" type="text" value="{$vo.fw_level}"/>
+					<span id="fw_level_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">固件说明:</td>
+				<td width="80%">
+					<textarea name="fw_detail" id="fw_detail" cols="80" rows="10">{$vo.fw_detail}</textarea>
+					<span id="fw_detail_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary"  name="Submit" value="确定<empty name="vo.fw_id">添加<else />修改</empty>" class="inputButton" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input name="fw_id" type="hidden" id="id" value="{$vo.fw_id}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

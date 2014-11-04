@@ -1,0 +1,46 @@
+<include file="Public:header" />
+<!-- 主页面区域 -->
+
+<div id="table">
+	<form action="__URL__/doEdit" method="POST" id="mainform">
+	<table class="edit"	cellspacing="0">
+	<thead>
+		<tr>
+			<th colspan="2" class="full">编辑用户组</th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		<tr>
+			<th width="20%">用户组名称</td>
+			<td width="80%"><input name="name" type="text" value="{$vo.name}"/></td>
+		</tr>
+		<tr>
+			<th width="20%">用户组描述</td>
+			<td width="80%"><input name="remark" type="text" value="{$vo.remark}"/></td>
+		</tr>
+		<tr>
+			<th>可用 </td>
+			<td>
+			<input name="status" type="radio" class="radio" id="radio" value="1" <eq name="vo['status']" value="1">checked=checked</eq>/>
+			允许
+			<input type="radio" name="status" id="radio2" value="0" class="radio" <eq name="vo['status']" value="0">checked=checked</eq>/>
+				不允许
+			</td>
+		</tr>
+			
+		<tr>
+			<td colspan="2" align="center">
+				<input type="submit" class="btn" name="Submit" value="确定修改" class="inputButton" />
+				<input type="reset" class="btn btnClose" name="Reset" value="返回" class="inputButton" />
+				<input name="id" type="hidden" id="id" value="{$vo.id}" />
+			</td>
+		</tr>
+	</tbody>
+	</table>
+	</form>
+</div>
+
+
+<!-- 主页面结束 -->
+<include file="Public:footer" />

@@ -1,0 +1,61 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+		var editor;
+		KindEditor.ready(function(K) {
+				editor = K.create('#cm_detail', {
+					allowFileManager : false,
+					uploadJson : '{:u("UpAttach/upKeditor")}',
+					filterMode : false,
+					formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+				});
+		});
+</script>
+<!-- 菜单区域	-->
+
+	<div id="table" >
+ 		<form action="<empty name='vo.cm_id'>__URL__/doAdd<else />__URL__/doEdit</empty>" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<tr>
+				<td width="20%">名称：</td>
+				<td ><input name="cm_name" type="text" value="{$vo.cm_name}" size="50"/>*</td>
+			</tr>
+			<tr>
+				<td width="20%">描述：</td>
+				<td>
+				<textarea id="cm_description" name="cm_description" style="width:620px;" >{$vo.cm_description}</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td width="20%">内容：</td>
+				<td>
+				<textarea id="cm_detail" name="cm_detail" style="width:620px;" >{$vo.cm_detail}</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">	
+					<input type="hidden" name="cm_id" value="{$vo.cm_id}"/>
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+					<input type="submit" class="btn btn-primary"	name="Submit" value="确定修改" class="inputButton" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />

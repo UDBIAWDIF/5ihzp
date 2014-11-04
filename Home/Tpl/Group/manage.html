@@ -1,0 +1,79 @@
+﻿<include file="Public:manage_common" />
+					<li class="height24_24 radius tabli" id="liimgmanage"><label><a href="{:U('Pic/manage')}">照片管理</a></label></li>
+					<li class="height24_24 margintop10 cur000 radius tabli" id="ligroupmanage"><label>组管理</label></li>
+				</ul>
+			</div>
+			<div class="imglist marginleft20 marginbottom10" style="width:710px;float:left;">
+				<ul id="ulgroup">
+					<li class="margintopbottom10 bold"><label class="marginright20">创建组：{:userCountGroup()}({:userSumGroupFriend()})</label><label class="marginleft20">加入组：{:userCountJoinGroup()}</label><a class="subadd floatright marginleft10 radius">用户请求(8)</a><a class="subadd floatright radius" onclick="javascript:openForm('dialogaddgroup','创建组',600,400,'')">+&nbsp;创建组</a></li>
+					<li class="margintopbottom10"><a class="subadd150" id="amygroup" href="{:U('Group/manage')}">我创建的组</a><a class="subadd150c marginleft10" id="aijoin" href="{:U('Group/joinlist')}">我加入的组</a></li>
+
+				<volist name="grouplist" id="group">
+					<li class="height70 paddingtop5 topborder1">
+						<img src="{$group.g_icon_id|getIconUrl}" class="floatleft userhead1" />
+						<div class="floatleft marginleft10 height40_20">
+							<label>组名：</label><label class="fontcolor4c9ed9">{$group.g_name}</label><label class="paddingleft20">ID：{$group.g_id}</label><label class="fontcolor999 paddingleft20">{$group.g_createtime|datetime='dt',###}</label><br />
+							<label class="fontcolor999">
+								{$group.g_description}
+							</label><br />
+							<label class="fontcolor999">
+								成员数：{$group.g_user_count}
+							</label>
+						</div>
+						<label class="detail floatright margintop20 marginleft10 radius">
+							<a class="invitejoingroup" gpid="{$group.g_id}">邀请</a>
+						</label>
+						<label class="detailc floatright margintop20 marginleft10 radius">
+							<a href="{:U('Group/delete', array('id' => $group['g_id']))}">删除</a>
+						</label>
+						<label class="detail floatright margintop20 radius">
+							<a class="modifygroup" gpid="{$group.g_id}">编辑</a>
+						</label>
+					</li>
+				</volist>
+
+				</ul>
+			</div>
+			<div class="page"><a>&laquo;</a><a>1</a><a>2</a><a>&raquo;</a></div>
+		</div>
+<include file="Public:aboutus" />
+	</div>
+	<div id="dialogmodify" style="display: none;">
+		<iframe name='dialogmodify' src="{:U('User/modify')}" marginheight='0' frameborder='0' scrolling='no'
+				width='570' height='350'></iframe>
+	</div>
+	<div id="dialogaddgroup" style="display: none;">
+		<iframe name='dialogaddgroup' src="{:U('User/addgroup')}" marginheight='0' frameborder='0' scrolling='no'
+				width='570' height='350'></iframe>
+	</div>
+	<div id="dialogmodifygroup" style="display: none;">
+		<iframe id='dialogmodifygroupfr' src="{:U('blank')}" marginheight='0' frameborder='0' scrolling='no'
+				width='570' height='350'></iframe>
+	</div>
+	<div id="dialoginvitegroup" style="display: none;">
+		<iframe id='dialoginvitegroupfr' src="{:U('blank')}" marginheight='0' frameborder='0' scrolling='no'
+				width='770' height='550'></iframe>
+	</div>
+<include file="Public:usermsg" />
+
+<script type="text/javascript">
+	var gpModifyShowUrlTpl = "{:U('Group/modify', array('id' => 'idholder'))}";
+	var gpInviteShowUrlTpl = "{:U('Group/invite', array('id' => 'idholder'))}";
+	$(function() {
+		$(".modifygroup").click(function() {
+			var gpId = $(this).attr('gpid');
+			var gpModifyShowUrl = gpModifyShowUrlTpl.replace('idholder', gpId);
+			document.getElementById('dialogmodifygroupfr').src = gpModifyShowUrl;
+			openForm('dialogmodifygroup','修改组',600,400,'');
+		});
+
+		$(".invitejoingroup").click(function() {
+			var gpId = $(this).attr('gpid');
+			var gpInviteShowUrl = gpInviteShowUrlTpl.replace('idholder', gpId);
+			document.getElementById('dialoginvitegroupfr').src = gpInviteShowUrl;
+			openForm('dialoginvitegroup','邀请好友加入',800,600,'');
+		});
+	});
+</script>
+</body>
+</html>

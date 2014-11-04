@@ -1,0 +1,71 @@
+<include file="../Public/header" />
+<!-- 菜单区域  -->
+
+	<div id="table" >
+		<form action="__URL__/doEdit" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="4" class="full">用户资料编辑</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr>
+			  <th width="25%">登 录 名</th>
+			  <td>
+					<input name="username" type="text" value="{$vo.username}"/>
+					<a href='javascript:iBox.showURL("__URL__/resetPassword/id/{$vo.id}")' class="inputButton1">修改密码</a>
+				</td>
+			</tr>
+			<tr>
+			  <th width="25%">真名</th>
+			  <td><input name="realname" type="text" value="{$vo.realname}"/>							</td>
+			</tr>
+			<tr>
+			  <th width="25%">笔名</th>
+			  <td><input name="penname" type="text" value="{$vo.penname}"/>							</td>
+			</tr>
+			<tr>
+			  <th>权限组</th>
+			  <td>
+					<select name="gid" id="select">
+						<volist name="list" id="row">
+						<option value="{$row.id}" <eq name="row.id" value="$vo['gid']">selected</eq>>{$row.name}</option>
+						</volist>
+				</select>
+			* </td>
+			</tr>
+			<tr>
+			  <th>描述</th>
+			  <td><input name="description" type="text" value="{$vo.description}" /></td>
+			</tr>
+			<tr>
+			  <th>状态</th>
+			  <td>
+					<input type="radio" name="status"  value="1" <eq name="vo['status']" value="1">checked=checked</eq> />启用
+					<input type="radio" name="status"  value="0" <eq name="vo['status']" value="0">checked=checked</eq> />锁定
+				</td>
+			</tr>
+		</tbody>
+		  <tfoot>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="hidden" name="id" value="{$vo.id}"/>
+					<input type="submit" class="btn btn-primary"  name="Submit" value="修改" />
+					<input type="button" class="btn btnClose" name="add" value="返回" />
+				</td>
+			</tr>
+		  </tfoot>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="../Public/js/ibox.js"></script>
+<script language="javascript" type="text/javascript" src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />

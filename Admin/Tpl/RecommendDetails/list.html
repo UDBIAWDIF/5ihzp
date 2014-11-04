@@ -1,0 +1,15 @@
+<volist name="list" id="vo">
+	<tr>
+		<td>
+			<input name="id[]" type="checkbox" value="{$vo.id}" class="checkbox" onchange="rd_check(this);">
+			<input name="rd_name_{$vo.id}" type="hidden" value="{$vo.name}"/>
+			<input name="rd_ref_icon_{$vo.id}" type="hidden" value="{$vo.icon}"/>
+			<input name="rd_ref_cover_{$vo.id}" type="hidden" value="{$vo.cover}"/>
+		</td>
+		<td>{$vo.id}</td>
+		<td>{$vo.name} </td>
+		<td>{$vo.desc}</td>
+	</tr>
+</volist>
+<empty name="list"><tr><td colspan="4">查无相关资料</td></tr></empty>
+<input type="hidden" name="rd_ref_type" value="{$_REQUEST['type']}" />

@@ -1,0 +1,206 @@
+<include file="Public:header" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<link rel="stylesheet" href="../Public/js/colorbox/colorbox.css" />
+<script charset="utf-8" src="../Public/js/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+	var imgUrlPrefix = '{$imgUrlPrefix}';
+	var thisSoftServerUrl = '{$thisSoftServerUrl}';
+	var thisImgServerUrl = '{$thisImgServerUrl}';
+	var separator = '{$Think.config.img_link_separator}';
+	var editor;
+	KindEditor.ready(function(K) {
+		//处理ICON上传
+		editor = K.create('#detail', {
+			allowFileManager : false,
+			uploadJson : "{:u('UpAttach/upKeditor', array(C('VAR_SESSION_ID') => $_COOKIE['PHPSESSID']))}",
+			formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+		});
+
+		K('#uploadIconButton').click(function() {
+			var uploadJson;
+			if($('#icon_final').attr("checked")) {
+				uploadJson = '{:u("SysMessage/upIcon","final=1")}';	// 上传已经处理好的ICON图
+			} else {
+				uploadJson = '{:u("SysMessage/upIcon")}';
+			}
+
+			var editorIcon = K.editor({
+				allowFileManager : false,
+				uploadJson : uploadJson,
+				formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+			});
+
+			editorIcon.loadPlugin('insertfile', function() {
+				editorIcon.plugin.fileDialog({
+					fileUrl : K('#icon_url').val(),
+					clickFn : function(url, title) {
+						K('#icon').val(url);
+						K('#icon_url').attr('src', realUrl(url));
+						editorIcon.hideDialog();
+					}
+				});
+			});
+		});
+	});
+
+	//等待窗口
+	function waitbox(showtext, close) {
+		if(close) {
+			$.colorbox.close();
+		} else {
+			if(!showtext) {showtext = '正在生成数据......';}
+			$.colorbox({
+				href : "../Public/images/load.gif",
+				title : showtext,
+				overlayClose : false
+			});
+		}
+	}//end waitbox()
+
+	$(function() {
+		//处理封面、ICON域名
+		var imgIconUrl = "{$vo.icon}";
+		$('#icon_url').attr('src', realUrl(imgIconUrl));
+	});
+
+	//判断是否可能是个标准URL链接
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}//end isUrl
+
+	function toKB(num) {
+		num = num / 1024;
+		return num.toFixed(2);
+	}//end toKB()
+
+	//如果 url 不是标准的 url ,就加上域名
+	function realUrl(url) {
+		var type = arguments[1] ? arguments[1] : 'img';
+		url = url.toString();
+		if(!isUrl(url)) {
+			switch (type) {
+				case 'soft' :
+					url = thisSoftServerUrl + url;
+					break;
+				case 'img' :
+					url = thisImgServerUrl + url;
+					break;
+			}
+		}
+		return url;
+	}//end realUrl()
+
+	var is_submit = false;
+	window.onbeforeunload = function(){
+		if(!is_submit){
+			return '您输入的数据未保存';
+		}
+	}
+
+	function checkNotNull() {
+		var fields = {
+			'title'		: '标题',
+			//'content'	: '内容',
+			'icon'		: 'ICON',
+			'rec_id'	: '关联ID'
+		};
+
+		for(key in fields) {
+			if($("#"+key).val() == '') {
+				alert(fields[key]+'不能为空');
+				return false;
+			}
+		}
+		is_submit=true;
+		return true;
+	}
+</script>
+
+	<div id="table" >
+		<form onsubmit="return checkNotNull();" action='<empty name="vo.id">__URL__/doAdd<else />__URL__/doEdit</empty>' method="POST" name="f1" id="mainform" <notempty name="vo.id">class="noReflesh"</notempty>>
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr>
+				<th width="20%">标题:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="title" id="title" type="text" value="{$vo.title}" require="true" datatype="require" placeholder="输入标题" msg="重要！请填写标题" />
+					<span id="title_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">关联ID:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="rec_id" id="rec_id" type="text" value="{$vo.rec_id}" require="true" datatype="require" placeholder="输入关联ID" msg="重要！请填写关联ID" />
+					<span id="rec_id_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">ICON<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<img name="icon_url" id="icon_url" src="{$vo.icon}" class="imgLimitimg" />
+					&nbsp;&nbsp;<a href="#" id="uploadIconButton" class="btn" value="上传ICON">上传ICON</a>
+					<input name="icon" id="icon" type="hidden" value="{$vo.icon}" require="true" datatype="require" placeholder="上传ICON" msg="重要！请上传ICON" />
+					<input name="icon_final" id="icon_final" type="checkbox" value="1" />图片已经处理好</input>
+					<span id="icon_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">内容:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="content" type="text" value="{$vo.content}" require="true" datatype="require" placeholder="输入内容" msg="重要！请填写内容" />
+					<span id="content_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">发布起始日期:</td>
+				<td width="80%">
+					<input onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="Wdate" size="30"  name="pubtime_begin" id="pubtime_begin" type="text" value="<empty name='vo.pubtime_begin'>{:date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME'])}<else />{$vo.pubtime_begin}</empty>" />
+					<span id="pubtime_begin_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">发布结束日期:</td>
+				<td width="80%">
+					<input onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="Wdate" size="30"  name="pubtime_end" id="pubtime_end" type="text" value="<empty name='vo.pubtime_end'>{:date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME'] + 86400)}<else />{$vo.pubtime_end}</empty>" />
+					<span id="pubtime_end_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary" name="Submit" value="确定<empty name="vo.id">添加<else />修改</empty>" class="inputButton" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input type="hidden" name="app_os" value="2" />
+					<input name="id" id="id" type="hidden" value="{$vo.id}" />
+					<input name="type" id="type" type="hidden" value="app" />
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

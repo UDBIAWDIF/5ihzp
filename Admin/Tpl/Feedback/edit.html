@@ -1,0 +1,67 @@
+<include file="Public:header" />
+
+	<div id="table" >
+		<form action="__URL__/doEdit" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th width="20%">所属文章</td>
+				<td width="80%">{$vo.feedback_arctitle}</td>
+			</tr>
+			<tr>
+				<th width="20%">用户</td>
+				<td width="80%">{$vo.feedback_username}</td>
+			 </tr>
+			<tr>
+				<th width="20%">评论时间</td>
+				<td width="80%">{$vo.feedback_added|date="Y-m-d H:i:s",###}</td>
+			 </tr>
+			<tr>
+				<th width="20%">IP地址</td>
+				<td width="80%">{$vo.feedback_ip}</td>
+			 </tr>
+			<tr>
+				<th width="20%">支持人数</td>
+				<td width="80%">{$vo.feedback_good}</td>
+			 </tr>
+			 <!--tr>
+				<th width="20%">引用内容</td>
+				<td width="80%">{$vo.feedback_quote|htmlspecialchars}</td>
+			 </tr-->
+			<tr>
+				<th width="20%">评论内容</td>
+				<td width="80%"><textarea name="feedback_msg" cols="80" rows="8">{$vo.feedback_msg|htmlspecialchars}</textarea></td>
+			 </tr>
+			<tr>
+				<th width="20%">审核</td>
+				<td width="80%">
+					<label><eq name="vo['feedback_status']" value="0"><input name="feedback_status" type="checkbox" value="1" checked/></eq>
+					已审核</label>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">管理员</td>
+				<td width="80%" style="color:red;">
+					{$vo.feedback_admin}
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn"  name="Submit" value="确定修改" class="inputButton" />&nbsp;
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input name="feedback_id" type="hidden" id="id" value="{$vo.feedback_id}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

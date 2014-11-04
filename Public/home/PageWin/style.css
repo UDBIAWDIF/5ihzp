@@ -1,0 +1,17 @@
+﻿body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote,a,big, em,font,img,strong,tt, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, table, caption, tbody, tfoot, thead, tr, th,td{ padding: 0; margin: 0; }
+table { border-collapse: collapse; border-spacing: 0; }
+fieldset, img { border: 0; }
+ol, ul { list-style: none; }
+h1, h2, h3, h4, h5, h6 {font-size: 100%; }
+ 
+.PageWinCover {text-align:center; position:absolute;left:0px;top:0px;z-index:999; cursor:default; background:#000; Opacity:0.7; filter:alpha(opacity=70);}
+.PageWinBorder {position:absolute; left:0px; top:0px; z-index:1000; background:#000; Opacity:0.6; filter:alpha(opacity=60);}
+.PageWin {position:absolute; left:0px; top:0px; border:1px solid #dfdfdf; background:#f7f7f8; z-index:1001;}
+.PageWinTitle {height:32px; line-height:32px; padding:6px 0px 4px 43px; text-align:left; font-size:16px; font-family:"微软雅黑","黑体"; color:#000;}
+a.PageWinClose {display:block; position:absolute; width:32px; height:32px; right:5px; top:5px; background:url(images/close2.png) no-repeat;}
+a.PageWinClose:hover {filter:alpha(opacity:80);opacity:0.8;}
+.PageWinCon {overflow:auto; text-align:center; color:#000;}
+
+.PageWinInfoBoxCover {position:absolute; left:0px; top:0px; width:508px; height:458px; background:#fff; Opacity:0.6; filter:alpha(opacity=60); z-index:1002;}
+.PageWinInfoBox {position:absolute; left:124px; top:169px; width:215px; height:35px; border:3px solid #FF5800; padding:30px 20px; background:#fff; z-index:1003;}
+.PageWinInfoBox .PageWinInfo {padding:0px 0px 0px 50px; line-height:35px; font-family:"微软雅黑","黑体"; color:#000; text-align:left; background:url(images/err.gif) left center no-repeat;}

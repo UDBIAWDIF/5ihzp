@@ -1,0 +1,29 @@
+<include file="Public:head" />
+
+<body>
+	<div class="padding10">用户数：{$count}</div>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="paddinglr10">
+		<tr>
+			<td>
+				<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#c9c9c9">
+					<tr class="tr_title">
+						<td width="20%"><div><span class="style1">ID</span></div></td>
+						<td width="30%"><div><span class="style1">最后登录</span></div></td>
+						<td width="30%"><div><span class="style1">注册时间</span></div></td>
+						<td width="20%"><div><span class="style1">操作</span></div></td>
+					</tr>
+
+					<volist name="list" id="vo"><tr class="tr_list">
+						<td><div><span class="style3">{$vo.u_name}</span></div></td>
+						<td><div><span class="style3">{$vo.u_last_logintime|datetime='dt',###}</span></div></td>
+						<td><div><span class="style3">{$vo.u_createtime|datetime='dt',###}</span></div></td>
+						<td><div class="style5"><a>详细</a>&nbsp;<a>删除</a></div></td>
+					</tr></volist>
+
+				</table>
+			</td>
+		</tr>
+		<tr><td>{$page}</td></tr>
+	</table>
+</body>
+</html>

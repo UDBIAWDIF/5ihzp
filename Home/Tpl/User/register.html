@@ -1,0 +1,82 @@
+<include file="Public:head" />
+	<script type="text/javascript">
+		$(function () {
+			$("#btnSub").click(function () {
+				// 表单验证,ajax提交表单,成功后跳转
+				window.location = "{:U('User/regsuccess')}";
+			});
+		});
+	</script>
+</head>
+<body>
+	<form method="post"><div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;">
+		<div class="dialogshow floatleft">
+			<ul class="height40">
+				<li class="floatleft left">
+					用户名：
+				</li>
+				<li class="floatleft right">
+					<input type="text" name="name" value="" />
+				</li>
+			</ul>
+			<ul class="height40">
+				<li class="floatleft left">
+					设置密码：
+				</li>
+				<li class="floatleft right">
+					<input type="text" name="name" value="" />
+				</li>
+			</ul>
+			<ul class="height40">
+				<li class="floatleft left">
+					确认密码：
+				</li>
+				<li class="floatleft right">
+					<input type="text" name="name" value="" />
+				</li>
+			</ul>
+			<ul class="height40">
+				<li class="floatleft left">
+					地区：
+				</li>
+				<li class="floatleft right">
+					<input type="text" name="name" value="" />
+				</li>
+			</ul>
+			<ul class="height40">
+				<li class="floatleft left">
+					邮箱：
+				</li>
+				<li class="floatleft right">
+					<input type="text" name="name" value="" />
+				</li>
+			</ul>
+			<ul class="height40">
+				<li class="floatleft left">
+					签名：
+				</li>
+				<li class="floatleft right">
+					<input type="text" name="name" value="" />
+				</li>
+			</ul>
+		</div>
+		<div style="width: 120px;" class="floatleft">
+			<ul class="height40">
+				<li class="alignleft">头像</li>
+			</ul>
+			<ul class="">
+				<li><img src="__HOME__images/head1.jpg" width="120" class="border1 padding1" /></li>
+			</ul>
+			<ul class="height30">
+				<li class="alignright"><a>上传</a></li>
+			</ul>
+		</div>
+		<div style="display:block; position:absolute; bottom:0; right:0;">
+			<ul>
+				<li class="floatleft height40"><a class="bold" href="{:U('User/login')}">已有账户，直接登录&nbsp;&gt;&gt;</a></li>
+				<li class="floatright" style="width:400px;"><label class="cancel floatright">取消</label><label class="sub floatright" id="btnSub">确定</label></li>
+			</ul>
+		</div>
+	</div></form>
+</body>
+</html>

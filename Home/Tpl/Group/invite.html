@@ -1,0 +1,60 @@
+﻿<include file="Public:head" />
+</head>
+<body>
+	<div style="margin: 0 auto; width: 750px; height: 500px; padding-top: 10px;">
+		<div class="floatleft alignleft">
+			<ul>
+				<li class="height30"><label>选择好友</label></li>
+			</ul>
+			<div class="groupuserdiv">
+				<ul class="height40">
+					<li class="">
+						<input type="text" name="name" class="sear inputsearch" placeholder="ID" />
+					</li>
+				</ul>
+				<ul class="height30 alignleft groupul friendsselect">
+
+					<!-- li class="paddingLR10"><label class="fontcolor4c9ed9">A</label></li -->
+				<volist name="friends" id="friend">
+					<li class="listzi paddingLR10" uid="{$friend.u_id}" upy="{$friend.u_name_pinyin}">
+						<span class="man"></span><label class="">{$friend.u_name}</label>
+					</li>
+				</volist>
+
+				</ul>
+			</div>
+		</div>
+		<div style="width: 85px;height:300px;line-height:300px;" class="floatleft">
+			<ul>
+				<li><a class="groupto radius">&gt;&gt;</a></li>
+			</ul>
+		</div>
+		<div class="floatleft alignleft">
+			<ul>
+				<li class="height30"><label>已选择好友</label></li>
+			</ul>
+			<div class="groupuserdiv">
+				<ul class="height40">
+					<li class="">
+						<input type="text" class="sear inputsearch" placeholder="ID" />
+					</li>
+				</ul>
+				<ul class="height30 alignleft groupul inviteselect">
+					<!-- li class="paddingLR10"><label class="fontcolor4c9ed9">A</label></li -->
+				</ul>
+			</div>
+		</div>
+		<div style="display: block; position: absolute; bottom: 0; right: 0;">
+			<form class="ajaxForm" method="POST" action="{:U('Group/invite')}" notip="1" parentrefresh="1"><ul>
+				<li class="floatright" style="width: 400px;">
+					<label class="cancel floatright" onclick="javascript:window.parent.location.reload();">取消</label>
+					<input class="sub floatright" type="submit" value="邀请" />
+					<!-- label class="cancel floatright">取消</label><label class="sub floatright" id="btnSub">邀请</label -->
+				</li>
+				<input type="hidden" name="id" value="{$Think.request.id}" />
+				<input type="hidden" name="userids" value="" />
+			</ul></form>
+		</div>
+	</div>
+</body>
+</html>

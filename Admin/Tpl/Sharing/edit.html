@@ -1,0 +1,138 @@
+<include file="Public:header" />
+
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+	var editor;
+	var thisServerUrl = '{$thisServerUrl}';
+	KindEditor.ready(function(K) {
+			editor = K.create();
+
+			//处理封面上传
+			var editorCovert = K.editor({
+				allowFileManager : false,
+				uploadJson : '{:u("Sharing/upCover")}',
+				formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+			});
+			K('#uploadCoverButton').click(function() {
+				editorCovert.loadPlugin('insertfile', function() {
+					editorCovert.plugin.fileDialog({
+						fileUrl : K('#sh_cover_url').val(),
+						clickFn : function(url, title) {
+							K('#sh_cover').val(url);
+							K('#sh_cover_url').attr('src', thisServerUrl + url);
+							editorCovert.hideDialog();
+						}
+					});
+				});
+			});
+
+	 });
+	 	//判断是否可能是个标准URL链接
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}//end isUrl
+	
+	function realUrl(url) {
+		url = url.toString();
+
+		if(!isUrl(url)) {
+			url = thisServerUrl + url;
+		}
+		return url;
+	}
+	 $(function() {	
+		//处理封面、ICON域名  $('#app_cover_url').attr('src', realUrl(url));.
+		var imgCoverUrl = "{$vo.sh_cover}";
+		var imgCover = $('#sh_cover_url').attr('src', realUrl(imgCoverUrl));
+	});
+</script>
+
+	<div id="table" >
+		<form action="<empty name='vo.sh_id'>__URL__/doAdd<else />__URL__/doEdit</empty>" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="4" class="full"><empty name="vo.sh_id">添加<else />编辑</empty>分享</th>
+			</tr>
+		</thead>
+		<tbody>
+					<tr>
+						<td width="20%">分享名称：</td>
+						<td width="80%" colspan='3'><input name="sh_name" type="text" value="{$vo.sh_name}" size="100"/>*</td>
+					</tr>
+					<tr>
+						<td width="20%">分类：</td>
+						<td width="80%" colspan='3'>
+							<select name="sh_cg_id" id="select">
+								<option value="" >无</option>
+								{:genCgTree($clist,'sh',$vo,$vo.sh_cg_id,1)}
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td width="20%">分享说明：</td>
+						<td width="80%" colspan='3'>
+						<textarea id="sh_description" name="sh_description" style="width:620px">{$vo.sh_description}</textarea>
+						</td>
+					</tr>
+					<tr>
+						<td width="20%">上传封面：</td>
+						<td width="80%" colspan='3'>
+							<img name="sh_cover_url" id="sh_cover_url" src="{$vo.sh_cover_url}" class="imgLimitimg" />
+							&nbsp;&nbsp;<a href="#" id="uploadCoverButton" class="btn" value="上传封面">上传封面</a>
+							<input name="sh_cover" id="sh_cover" type="hidden" value="{$vo.sh_cover}" />
+							<span id="sh_cover_message"></span>
+						</td>
+					</tr>
+					<tr>
+						<td width="20%">内容类别：</td>
+						<td width="30%">
+							<select name="sh_ctype" class="input-small" >
+								<option value="1" <eq name="vo.sh_ctype" value="1">selected</eq>>应用</option>
+								<option value="2" <eq name="vo.sh_ctype" value="2">selected</eq>>文章</option>
+							</select>
+
+						</td>
+						<td width="10%" align="right">ID：</td>
+						<td width="40%"><input name="sh_ref_id" type="text" value="{$vo.sh_ref_id}" size="20"/></td>
+					</tr>
+					<tr>
+						<td width="20%">排序：</td>
+						<td width="80%" colspan='3'><input name="sh_order" type="text" value="{$vo.sh_order}" size="20"/></td>
+					</tr>
+					<tr>
+						<td width="20%">分享用户：</td>
+						<td width="80%" colspan='3'><input name="sh_author" type="text" value="{$vo.sh_author}" size="20"/></td>
+					</tr>
+            <tr>
+              <td>状态：</td>
+              <td colspan='3'>
+					<input type="radio" name="sh_status" value="1" <eq name="vo.sh_status" value="1">checked</eq>/>上架
+					<input type="radio" name="sh_status" value="0" <eq name="vo.sh_status" value="0">checked</eq>/>下架
+
+				</td>
+            </tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary"  name="Submit" value="确定<empty name='vo.sh_id'>添加<else />修改</empty>" class="inputButton" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input name="sh_id" type="hidden" id="sh_id" value="{$vo.sh_id}" />
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

@@ -1,0 +1,68 @@
+<include file="Public:header" />
+<div id="table">
+	<form action="__URL__/doEdit" method="POST" id="mainform" class="form-horizontal">
+	<table class="edit"  cellspacing="0">
+	<thead>
+		<tr>
+			<th colspan="2" class="full"></th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		<tr>
+		  <th width="25%">节 点 名</td>
+		  <td><input name="name" type="text" value="{$vo.name}" size="50"/></td>
+		</tr>
+		<tr>
+		  <th width="25%">显 示 名</td>
+		  <td><input name="viewName" type="text" value="{$vo.viewName}" size="50"/></td>
+		</tr>
+		<tr>
+		  <th width="25%">排 序</td>
+		  <td><input name="orders" type="text" value="{$vo.orders}" class="input-mini"/></td>
+		</tr>
+		<tr>
+		  <th>描　述</td>
+		  <td><input name="description" type="text" value="{$vo.description}" size="50"/></td>
+		</tr>
+		<tr>
+		  <th>父节点</td>
+		  <td>
+				<select name="pid" id="select">
+					<option value="0">根节点</option>
+					
+					<volist name="list" id="row">
+					<option value="{$row.id}" <eq name="row.id" value="$vo['pid']">selected</eq>>{$row.viewName}</option>
+					<notempty name="row.child">
+					
+					<Foreach name="row.child" item="sub">
+						<option value="{$sub.id}" <eq name="sub.id" value="$vo.pid"> selected </eq> >&nbsp └{$sub.viewName}</option>
+					</Foreach>
+					
+					</notempty>
+					</volist>
+				</select>
+			</td>
+		</tr>
+		<tr>
+		  <th>是否菜单显示</td>
+		  <td>
+			<input type="radio" name="type" value="1" <eq name="vo.type" value="1">checked=true</eq>/>显示 
+			<input type="radio" name="type" value="0" <eq name="vo.type" value="0">checked=true</eq>/>不显示</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">	
+				<input type="hidden" name="id" value="{$vo.id}"/>
+				<input type="submit" class="btn"  name="Submit" value="确定修改" class="inputButton" />
+			<input type="button" class="btn btnClose" name="add" value="返回" />
+			</td>
+		</tr>
+	</tbody>
+	</table>
+	</form>
+	</div>
+</div>
+</div>
+
+<!-- 主页面结束 -->
+<include file="Public:footer" />

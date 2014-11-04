@@ -1,0 +1,139 @@
+﻿<include file="Public:head" />
+	<link rel="stylesheet" type="text/css" href="__HOME__PageWin/style.css" />
+	<script type="text/javascript" src="__HOME__PageWin/script.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/Js/modaldialog/css/jquery.modaldialog.css" />
+	<script type="text/javascript" src="__PUBLIC__/Js/modaldialog/jquery.modaldialog.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/Js/weebox0.4/weebox.css" />
+	<script type="text/javascript" src="__PUBLIC__/Js/weebox0.4/bgiframe.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/Js/weebox0.4/weebox.js"></script>
+<include file="Public:colorbox" />
+</head>
+<body>
+<include file="Public:nav_top" />
+	<div class="bodydiv">
+		<div class="margintop30">
+			<div class="imglist marginleft20 marginbottom10" style="width:100%;float:left;">
+				<ul id="ulgroup">
+					<li>
+						<form method="GET">
+							<input type="text" name="namesearch" value="{$Think.request.namesearch}" placeholder="群名称、创建人" class="msg" />
+							<input type="submit" class="subadd marginleft5" value="搜索" />
+						</form>
+					</li>
+
+					<li class="margintopbottom10 bold"><label class="marginright20">标签：生活(10)&nbsp;旅游(12)</label></li>
+
+				<volist name="list" id="group">
+					<li class="height70 paddingtop5">
+						<img src="{$group.g_icon_id|getIconUrl}" class="floatleft userhead1" />
+						<div class="floatleft marginleft10 height40_20">
+							<label>组名：</label><label class="fontcolor4c9ed9">{$group.g_name}</label><label class="paddingleft20">ID：{$group.g_id}</label><label class="fontcolor999 paddingleft20">创建：{$group.g_createtime|datetime='dt',###}</label><br />
+							<label class="fontcolor999">
+								{$group.g_description}
+							</label><br />
+							<label class="fontcolor999">
+								成员数：{$group.g_user_count}
+							</label>
+						</div>
+						<PHP>$isIn = isInGroup($group['g_id']);</PHP>
+						<empty name="isIn"><label class="detail floatright margintop20 radius addtogroupbtn" href="#addtogroup" gpid="{$group.g_id}" gpname="{$group.g_name}">申请加入</label><else /><label class="detailautoc floatright margintop20 radius">您已是该群成员</label></empty>
+					</li>
+				</volist>
+
+				</ul>
+			</div>
+			<div class="page">{$page}</div>
+		</div>
+<include file="Public:aboutus" />
+	</div>
+
+	<div style="display: none;">
+		<form id="addtogroup" class="ajaxForm" method="POST" action="{:U('User/joingroup')}" successfunc="after_addtogroup" notip="1">
+			<div style="margin: 0 auto; height: 300px; padding-top:10px;">
+				<div class="dialogshow floatleft">
+					<ul class="height40">
+						<li class="floatleft left">
+							申请加入群：
+						</li>
+					</ul>
+					<ul class="height40">
+						<li class="floatleft left">
+							群名称：
+						</li>
+						<li class="floatleft right">
+							<input type="text" name="groupname" disabled="disabled" value="" />
+						</li>
+					</ul>
+					<ul class="height40">
+						<li class="floatleft left">
+							附加消息：
+						</li>
+						<li class="floatleft right">
+							<textarea name="reason"></textarea>
+						</li>
+					</ul>
+				</div>
+				<div style="display:block; position:absolute; bottom:0; right:0;">
+					<ul>
+						<li class="floatright" style="width:200px;">
+							<input type="hidden" name="g_id" />
+							<label class="cancel floatright" onclick="javascript:window.location.reload();">取消</label>
+							<input class="sub floatright" type="submit" value="申请" />
+						</li>
+					</ul>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script language="javascript">
+		$(document).ready(function() {
+			triggerFuncs['after_addtogroup'] = function() {
+				jQuery.colorbox.close();
+				$.weeboxs.open('申请发送成功', {
+					title:		'申请结果: <font color="red">5</font>秒后自动关闭',
+					modal:		false,
+					draggable:	true,
+					timeout:	5,
+					onopen:		function(box) {
+						var closetime = parseInt(box.dt.find('font').html(),10);
+						var handle = setInterval(function(){
+							closetime--;
+							box.dt.find('font').html(closetime);
+							if (closetime<=0) {
+								clearInterval(handle);
+								// window.location.reload();
+							}
+						}, 1000);
+					}
+				});
+			};
+
+			$(".addtogroupbtn").colorbox({
+				inline: true,
+				width: "500px",
+				closeButton: false,
+				onOpen: function() {
+					var thisObj = $(this);
+					var formObj = $('#addtogroup');
+					formObj
+						.find('input[name="g_id"]')
+						.val(thisObj.attr('gpid'))
+						.end()
+						.find('input[name="groupname"]')
+						.val(thisObj.attr('gpname'));
+				},
+				onComplete: function() {
+					;
+				},
+				onClosed: function() {
+					;
+				}
+			});
+		});
+	</script>
+
+<include file="Public:regloginfr,Public:usermsg" />
+<include file="Public:foot" />

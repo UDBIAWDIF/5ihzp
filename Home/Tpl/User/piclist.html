@@ -1,0 +1,74 @@
+<include file="Public:head" />
+	<style>
+		.clock{
+			width: 64px;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="__HOME__PageWin/style.css" />
+	<script type="text/javascript" src="__HOME__PageWin/script.js"></script>
+</head>
+<body>
+<include file="Public:nav_top" />
+	<div class="bodydiv">
+		<div class="margintop30">
+			<div class="banner">
+				<img src="__HOME__images/banner1.jpg" /></div>
+			<div class="bannerhead">
+				<div class="radius5 headgroup">
+					<img src="{$user.u_icon_id|getUserHeadById}" width="100" class="radius5 border1" />
+					<PHP>$uid = getUid();</PHP>
+					<neq name="user.u_id" value="$uid">
+					<a class="subadd1 likeuser" href="{:U('User/like', array('uid' => $user['u_id']))}" uid="{$pic['u_id']}">
+					<switch name="user.u_id|likeStatus">
+						<case value="1">已关注</case>
+						<case value="2">相互关注</case>
+						<default />关&nbsp;注
+					</switch>
+					</a>
+					</neq>
+				</div>
+				<div class="headtitle">
+					<p class="fontsize18 fontcolor333">{$user.u_name}</p>
+					<p class="fontcolor999">{$user.u_sign}</p>
+					<p class="fontsize14 fontcolor007acc">{$user.u_email}</p>
+				</div>
+				<div class="headcount">
+					<div class="radiustopleft radiusbottomleft">
+						<p class="fontsize16">{$user.u_pic_count}</p>
+						<p>照片</p>
+					</div>
+					<div>
+						<p class="fontsize16">{$user.u_like_user_count}</p>
+						<p>关注</p>
+					</div>
+					<div>
+						<p class="fontsize16">{$user.u_fans_count}</p>
+						<p>粉丝</p>
+					</div>
+					<div class="radiustopright radiusbottomright">
+						<p class="fontsize16">{$user.u_comment_count}</p>
+						<p>评论</p>
+					</div>
+				</div>
+			</div>
+			<div class="imglist">
+				<ul>
+					<li class="margintopbottom10">六月2014</li>
+					<li class="aligncenter imglisthead" style="overflow: hidden;">
+					{:load('extend')}
+					<volist name="list" id="pic">
+						<div class="alignleft width_160 floatleft margin8">
+							<p>
+								<img src="{$pic.pic_path|getImgUrlOnSite|getSmallImgUrl}" width="150" /></p>
+							<p class="paddingleftright">{$pic.pic_detail|msubstr=0,7,'utf-8',false}<label class="fontcolor999 clock floatright"><a>&nbsp;</a>{$pic.pic_format_createtime|substr=-8,5}</label></p>
+						</div>
+					</volist>
+					</li>
+				</ul>
+			</div>
+			<div class="page">{$page}</div>
+		</div>
+<include file="Public:aboutus" />
+	</div>
+<include file="Public:regloginfr,Public:usermsg" />
+<include file="Public:foot" />

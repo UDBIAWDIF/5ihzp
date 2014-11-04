@@ -1,0 +1,224 @@
+<include file="Public:head" />
+	<link href="__PUBLIC__/Js/kindeditor/themes/default/default.css" rel="stylesheet" />
+	<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/lang/zh_CN.js"></script>
+	<script type="text/javascript">
+		var userLocationByIp = "{:getCityByIp()}";
+		$(function () {
+			$("#atologin").click(function () {
+				$(".tabli").removeClass("cur");
+				$("#li1").addClass("cur");
+				$("#login").css("display", "block");
+				$("#reg").css("display", "none");
+			});
+			$("#li1").click(function () {
+				$(".tabli").removeClass("cur");
+				$(this).addClass("cur");
+				$("#login").css("display", "block");
+				$("#reg").css("display", "none");
+			});
+			$("#li2").click(function () {
+				$(".tabli").removeClass("cur");
+				$(this).addClass("cur");
+				$("#login").css("display", "none");
+				$("#reg").css("display", "block");
+			});
+			$("#atologin").click();
+		});
+
+	var thisServerImgPre = '{$thisServerImgPre}';
+	KindEditor.ready(function (K) {
+		return false;
+		var uploadbutton = K.uploadbutton({
+			button: K('#uploadIconButton')[0],
+			fieldName: 'imgFile',
+			url: '{:u("User/setHead")}',
+			beforeSubmit: loading,
+			afterUpload: function (data) {
+				tips.close();
+				if (data.error === 0) {
+					// var url = K.formatUrl(data.url, 'absolute');
+					var url = data.url;
+					K('#icon_path').val(url);
+					K('#userhead').attr('src', realUrl(url));
+				} else {
+					alert(data.message);
+				}
+			},
+			afterError: function (str) {
+				alert('上传失败, 原因: ' + str);
+			}
+		});
+		uploadbutton.fileBox.change(function (e) {
+			uploadbutton.submit();
+		});
+	});
+
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function realUrl(url) {
+		url = url.toString();
+		if(!isUrl(url)) {
+			url = thisServerImgPre + url;
+		}
+		return url;
+	}
+
+	</script>
+</head>
+<body>
+	<div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;">
+		<div class="aligncenter width100">
+			<ul class="tab1 marginleft1 height30">
+				<li class="tabli cur" id="li1">登录</li>
+				<li class="tabli" id="li2">注册</li>
+				<li class="tabli1">&nbsp;</li>
+			</ul>
+		</div>
+		<form id="form_login" class="ajaxForm" method="POST" action="{:U('User/login')}" notip="1" jumpurl="{:U('Index/index')}" parentjump="1"><div style="margin: 0 auto; width: 550px; height: 300px; padding-top: 10px;" id="login">
+			<div class="dialogshow floatleft">
+				<ul class="height40">
+					<li class="floatleft left">
+						账号：
+					</li>
+					<li class="floatleft right">
+						<input name="username" type="text" value="{:cookie('username')}" require="true" datatype="userName" placeholder="输入账号" msg="重要！请填写账号" />
+						<span id="username_message"></span>
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						密码：
+					</li>
+					<li class="floatleft right">
+						<input name="password" type="password" value="{:cookie('password')}" require="true" datatype="require" placeholder="输入密码" msg="重要！请填写密码" />
+						<span id="name_message"></span>
+					</li>
+				</ul>
+				<ul class="height30">
+					<li class="alignright" style="padding-right:60px;">
+						<a class="floatleft paddingleft80"><input type="checkbox" name="chksavepwd" id="chksavepwd" <PHP>if(cookie('chksavepwd')) {echo 'checked';}</PHP> /><label for="chksavepwd">记住密码</label></a>
+						<a href="{:U('User/findpw')}">忘记密码？</a>
+					</li>
+				</ul>
+				<ul class="height40_20">
+					<li class="floatleft left">
+						<a style="background:url(__HOME__images/15781.gif)right no-repeat; width:16px;height:16px; display:block; float:right;"></a>
+					</li>
+					<li class="floatleft right">
+						您的账号还未激活，请点击确认邮件内的确认链接即可完成账号激活。<a class="fontcolor007acc">重新发送确认邮件</a>
+					</li>
+				</ul>
+			</div>
+			<div style="width: 120px;" class="floatleft">
+				<ul class="height40">
+					<li class="alignleft">下载手机客户端</li>
+				</ul>
+				<ul class="">
+					<li>
+						<img src="__HOME__images/code.jpg" width="120" class="border1 padding1" />
+					</li>
+				</ul>
+			</div>
+			<div style="display: block; position: absolute; bottom: 0; right: 0;">
+				<ul>
+					<li class="floatleft height40"><a class="bold">&nbsp;</a></li>
+					<li class="floatright" style="width: 400px;">
+						<label class="cancel floatright" onclick="javascript:window.parent.location.reload();">取消</label>
+						<input class="sub floatright" type="submit" value="确定" />
+					</li>
+				</ul>
+			</div>
+		</div></form>
+		<form id="form_reg" class="ajaxForm" method="POST" action="{:U('User/register')}" successtip="注册成功" jumpurl="{:U('User/goto_active')}" parentjump="1"><div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;" id="reg">
+			<div class="dialogshow floatleft">
+				<ul class="height40">
+					<li class="floatleft left">
+						用户名：
+					</li>
+					<li class="floatleft right">
+						<input type="text" name="username" value="" require="true" datatype="userName" placeholder="输入用户名" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						设置密码：
+					</li>
+					<li class="floatleft right">
+						<input type="password" name="password" value="" require="true" datatype="require" placeholder="输入密码" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						确认密码：
+					</li>
+					<li class="floatleft right">
+						<input type="password" name="repassword" value="" require="true" datatype="require" placeholder="再次输入密码" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						地区：
+					</li>
+					<li class="floatleft right">
+						<select class="regionlevel" level="1" action="{:U('Region/queryChildren')}">
+							<option value="0">请选择省份</option>
+							<volist name="regionLevel1" id="region">
+								<option value="{$region.region_id}">{$region.region_name}</option>
+							</volist>
+						</select>
+						<select name="region_id" require="true" datatype="integer"  class="regionlevel" level="2"></select>
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						邮箱：
+					</li>
+					<li class="floatleft right">
+						<input type="text" name="email" value="" require="true" datatype="email" placeholder="输入邮箱" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						签名：
+					</li>
+					<li class="floatleft right">
+						<input type="text" name="sign" value="" placeholder="输入签名" />
+					</li>
+				</ul>
+			</div>
+			<!-- div style="width: 120px;" class="floatleft">
+				<ul class="height40">
+					<li class="alignleft">头像</li>
+				</ul>
+				<ul class="">
+					<li>
+						<img id="userhead" src="__HOME__images/camera.png" width="120" class="border1 padding1" />
+						<input type="hidden" name="icon_path" id="icon_path" value="" />
+					</li>
+				</ul>
+				<ul class="height30">
+					<li class="alignright"><input type="button" id="uploadIconButton" value="上传" /></li>
+				</ul>
+			</div -->
+			<div style="display:block; position:absolute; bottom:0; right:0;">
+				<ul>
+					<li class="floatleft height40"><a class="bold" id="atologin">已有账户，直接登录&nbsp;&gt;&gt;</a></li>
+					<li class="floatright" style="width:400px;">
+						<label class="cancel floatright" onclick="javascript:window.parent.location.reload();">取消</label>
+						<input class="sub floatright" type="submit" value="确定" />
+					</li>
+				</ul>
+			</div>
+		</div></form>
+	</div>
+</body>
+</html>

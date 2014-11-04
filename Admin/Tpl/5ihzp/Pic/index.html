@@ -1,0 +1,22 @@
+﻿<include file="Public:head" />
+
+<body>
+	<div class="bodydiv">
+		<div class="imglist">
+			<ul class="margintop10 bottomborder1">
+				<!-- li class="margintopbottom10"><strong>今日</strong></li -->
+				<li class="aligncenter imglisthead" style="overflow: hidden;">
+					<volist name="list" id="vo"><div class="alignleft width_160 floatleft margin8">
+						<p>
+							<img src="{$vo.pic_path|getImgUrlOnSite|getSmallImgUrl}" width="150" /></p>
+						<p class="paddingtop5 heightli30">
+							{$vo.pic_detail}<label class="fontcolor999 clock floatright">{$vo.pic_format_createtime|substr=-8,5}<a class="linkbtn marginleft10">推荐</a></label></p>
+					</div></volist>
+				</li>
+			</ul>
+
+		</div>
+		{$page}
+	</div>
+</body>
+</html>

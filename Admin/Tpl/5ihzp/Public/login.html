@@ -1,0 +1,44 @@
+<!doctype HTML PUBLIC "-//w3c//dtd xhtml 1.0 transitional//en" "http://www.w3.org/tr/xhtml1/dtd/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>52好照片后台管理系统</title>
+	<link href="__ADMIN__images/login.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="__PUBLIC__/Js/jq1.7.2.min.js"></script>
+</head>
+
+
+<body>
+	<div id="login">
+		<form action="{:U('Public/checkLogin')}" method="post"><div id="center" class="radius">
+			<div class="inputarea margintop90">
+				用 户
+				<input class="inputtext" type="text" name="username" />
+			</div>
+
+			<div class="inputarea">
+				密 码
+				<input class="inputtext" type="password" name="password" />
+			</div>
+
+			<div class="inputarea">
+				验证码
+				<input class="inputtext" type="text" name="verify" maxlength="8" style="width:100px" />
+				<a href="javascript:fleshVerify()" style="position:relative;"><IMG SRC="{:U('Public/verify')}" name="verifyImg" BORDER="0" align="absmiddle" id="verifyImg" title="如果您无法识别验证码，请点图片更换"></a>
+			</div>
+
+			<div class="btn">
+				<input type="submit" value="登 录" />
+			</div>
+		</div></form>
+	</div>
+
+	<script type="text/javascript">
+		function fleshVerify(){
+		var timenow = new Date().getTime();
+			// document.getElementById('verifyImg').src= '__APP__/Public/verify/'+timenow;
+			document.getElementById('verifyImg').src= "{:U('Public/verify')}?" + timenow;
+		}
+	</script>
+</body>
+</html>

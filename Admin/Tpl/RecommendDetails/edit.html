@@ -1,0 +1,194 @@
+<include file="Public:header" />
+<script type="text/javascript" src="../Public/js/datepicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+var editor;
+var thisServerUrl = '{$thisServerUrl}';
+
+KindEditor.ready(function(K) {
+	editor = K.create('');
+	//处理ICON上传
+	var editorIcon = K.editor({
+		allowFileManager : false,
+		uploadJson : '{:U("RecommendDetails/uploadIcon")}',
+		formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+	});
+	
+	K('#uploadIcon').click(function() {
+		editorIcon.loadPlugin('insertfile', function() {
+			editorIcon.plugin.fileDialog({
+				fileUrl : K('#rd_ref_icon').val(),
+				clickFn : function(url, title) {
+					$("#rd_ref_icon").val(url);
+					$("#rd_ref_icon_url").show().attr("src","{$base_url}"+url);
+					editorIcon.hideDialog();
+				}
+			});
+		});
+	});
+	
+	K('#uploadCover').click(function() {
+		editorIcon.loadPlugin('insertfile', function() {
+			editorIcon.plugin.fileDialog({
+				fileUrl : K('#rd_ref_cover').val(),
+				clickFn : function(url, title) {
+					$("#rd_ref_cover").val(url);
+					$("#rd_ref_cover_url").show().attr("src","{$base_url}"+url);
+					editorIcon.hideDialog();
+				}
+			});
+		});
+	});
+	
+	K('#uploadThumbnail').click(function() {
+		editorIcon.loadPlugin('insertfile', function() {
+			editorIcon.plugin.fileDialog({
+				fileUrl : K('#rd_thumbnail').val(),
+				clickFn : function(url, title) {
+					$("#rd_thumbnail").val(url);
+					$("#rd_thumbnail_url").show().attr("src","{$base_url}"+url);
+					editorIcon.hideDialog();
+				}
+			});
+		});
+	});
+	
+	K('#delIcon').click(function() {
+		$("#rd_ref_icon").val("");
+		$("#rd_ref_icon_url").hide().attr("src","");
+	});
+	
+	K('#delCover').click(function() {
+		$("#rd_ref_cover").val("");
+		$("#rd_ref_cover_url").hide().attr("src","");
+	});
+	
+	K('#delThumbnail').click(function() {
+		$("#rd_thumbnail").val("");
+		$("#rd_thumbnail_url").hide().attr("src","");
+	});
+});
+
+//判断是否可能是个标准URL链接
+function isUrl(url) {
+	var key = '://';
+	var position = url.indexOf(key);
+	if(position != -1 && position < 6) {
+		return true;
+	} else {
+		return false;
+	}
+}//end isUrl
+
+//如果 url 不是标准的 url ,默认为本站存储的文件
+function realUrl(url) {
+	url = url.toString();
+
+	if(!isUrl(url)) {
+		url = thisServerUrl + url;
+	}
+	return url;
+}
+$(function() {	
+	//处理封面、ICON域名  $('#app_cover_url').attr('src', realUrl(url));.
+	var imgCoverUrl = "{$vo.rd_ref_cover}";
+	var imgIconUrl = "{$vo.rd_ref_icon}";
+	var imgCover = $('#rd_ref_cover_url').attr('src', realUrl(imgCoverUrl));
+	var imgIcon = $('#rd_ref_icon_url').attr('src', realUrl(imgIconUrl));
+	var imgIcon = $('#rd_thumbnail_url').attr('src', realUrl("{$vo.rd_thumbnail}"));
+});
+</script>
+
+<div id="container">
+	<div id="header">
+		<div class="title">推荐管理 -> 推荐应用(文章) -> 编辑应用（文章）</div>
+		<div class="operate">
+			<ul class="subsubsub">
+				<li><a class="current" href="javascript:history.go(-1)">返回</a>&nbsp;|&nbsp;</li>
+			</ul>
+		</div>
+	</div>
+	<div id="content">
+	<div id="table" class="small">
+		<form action="__URL__/doEdit" method="POST">
+		<table class="edit"  cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full">编辑应用（文章）</th> 
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th width="20%">名称</td>
+				<td width="80%">
+					<input type="text" name="rd_name" value="{$vo.rd_name}" size="80"/>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">推荐理由</td>
+				<td width="80%">
+					<textarea  name="rd_reason" id="rd_reason" cols="80" rows="2" style="width: 600px;" require="true" datatype="require" placeholder="输入推荐理由" msg="重要！请填写推荐理由">{$vo.rd_reason}</textarea>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">类型</td>
+				<td width="80%">
+					<eq name="vo.rd_ref_type" value="0">文章<else/>应用</eq>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">封面</td>
+				<td width="80%">
+					<div><img src="{$vo.rd_ref_cover_url}" id="rd_ref_cover_url" class="imgLimitimg" <empty name="vo.rd_ref_cover">style="display:none;"</empty>/></div>
+					<input type="hidden" id="rd_ref_cover" name="rd_ref_cover" value="{$vo.rd_ref_cover}" />
+					<a href='javascript:void(0);' id="uploadCover" class="btn">上传图片</a>&nbsp;&nbsp;
+					<a href="javascript:void(0);" id="delCover" class="btn">删除图片</a>
+				</td>
+			</tr>
+			<!-- tr>
+				<th width="20%">缩略图</td>
+				<td width="80%">
+					<div><img src="{$vo.rd_thumbnail_url}" id="rd_thumbnail_url" class="imgLimitimg" <empty name="vo.rd_thumbnail">style="display:none;"</empty>/></div>
+					<input type="hidden" id="rd_thumbnail" name="rd_thumbnail" value="{$vo.rd_thumbnail}" />
+					<a href='javascript:void(0);' id="uploadThumbnail" class="btn">上传图片</a>&nbsp;&nbsp;
+					<a href="javascript:void(0);" id="delThumbnail" class="btn">删除图片</a>
+				</td>
+			</tr -->
+			<tr>
+				<th width="20%">图标</td>
+				<td width="80%">
+					<div><img src="{$vo.rd_ref_icon_url}" id="rd_ref_icon_url" class="imgLimitimg" <empty name="vo.rd_ref_icon">style="display:none;"</empty>/></div>
+					<input type="hidden" id="rd_ref_icon" name="rd_ref_icon" value="{$vo.rd_ref_icon}" />
+					<a href='javascript:void(0);' id="uploadIcon" class="btn">上传图片</a>&nbsp;&nbsp;
+					<a href="javascript:void(0);" id="delIcon" class="btn">删除图片</a>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">位次</td>
+				<td width="80%"><input type="text" name="rd_order" value="{$vo.rd_order}" /></td>
+			</tr>
+			<tr>
+				<th width="20%">生效日期</td>
+				<td width="80%"><input onclick="WdatePicker()" type="text" name="rd_release" value="{$vo.rd_release}" readonly class="Wdate" /></td>
+			</tr>
+			<tr>
+				<th width="20%">失效日期</td>
+				<td width="80%"><input onclick="WdatePicker()" type="text" name="rd_expired" value="{$vo.rd_expired}" readonly class="Wdate" /></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn"  name="Submit" value="确定修改" class="inputButton" />&nbsp;
+					<input type="button" class="btn" name="add" value="返回" onclick="javascript:history.go(-1)" />
+					<input name="rd_id" type="hidden" id="id" value="{$vo.rd_id}" />
+					<input name="rid" type="hidden" value="{$vo.rd_rm_id}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

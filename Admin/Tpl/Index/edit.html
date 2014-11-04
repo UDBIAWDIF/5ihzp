@@ -1,0 +1,75 @@
+<tagLib name="html" />
+<include file="../Public/header" />
+<!-- 菜单区域  -->
+
+<div id="container">
+	<div id="header">
+    	<div class="title">个人资料管理</div>
+        <div class="operate">
+        </div>
+    </div>
+    <div id="content">
+    <div id="table" class="small">
+   		<form action="__URL__/doEdit/gid/{.gid}" method="POST">
+    	<table class="edit"  cellspacing="0">
+        <thead>
+            <tr>
+                <th colspan="4" class="full">个人资料编辑</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+        	<tr>
+              <th width="25%">用 户 名</td>
+              <td width="25%"><input name="userName" type="text" value="{$vo.userName}"/></td>
+              <th width="25%">用 户 组</td>
+              <td width="25%">
+				<volist name="list" id="row">
+					<eq name="row.id" value="$vo['groupId']">
+						{$row.groupName}
+					</eq>
+				</volist>
+              </td>
+            </tr>
+			
+            <tr>
+              <th>电子邮箱</th>
+              <td><input name="email" type="text" value="{$vo.email}"/></td>
+              <th>QQ</th>
+              <td><input name="qq" type="text" value="{$vo.qq}"/></td>
+            </tr>
+			
+            <tr>
+              <th>手机</th>
+              <td><input name="mobile" type="text" value="{$vo.mobile}"/></td>
+              <th>电话</th>
+              <td><input name="telephone" type="text" value="{$vo.telephone}"/></td>
+            </tr>
+			
+            <tr>
+              <th>入职时间</th>
+              <td><input name="entrytime" type="text" value="{$vo.entrytime|date='Y-m-d',###}"onClick="WdatePicker()" class="Wdate"/></td>
+              <th>生日</th>
+              <td><input name="birthday" type="text" value="{$vo.birthday|date='Y-m-d',###}"onClick="WdatePicker()" class="Wdate" /></td>
+            </tr>
+        </tbody>
+		<tfoot>
+            <tr>
+              <td colspan="4" align="center">
+				<input type="hidden" name="id" value="{$vo.id}"/>
+				<input type="hidden" name="password" value="{$vo.password}"/>
+              	<input type="submit" class="btn"  name="Submit" value="修改" class="inputButton" />
+				<input type="button" class="btn" name="add" value="返回" onclick="javascript:history.go(-1)" />
+               </td>
+            </tr>
+        </tfoot>
+        </table>
+        </form>
+        </div>
+    </div>
+</div>
+
+<script language="javascript" type="text/javascript" src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />

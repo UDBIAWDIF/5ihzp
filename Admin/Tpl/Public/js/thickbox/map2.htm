@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=gbk">
+<title>Javascript中的onmousewheel事件</title>
+<style>
+body{padding:0 150px; text-align:center;}
+.wrap{margin:0 auto; text-align:left;}
+.item{margin:0 0 10px 0;}
+pre{ display:block; background:#FF6600;color:#fff; border:1px solid #000;padding:10px;}
+</style>
+<script type="text/javascript" src="images/jquery-1.js"></script>
+<script type="text/javascript" src="images/jquery.js"></script>
+<script>
+$(function(){
+function wheel(obj, fn ,useCapture){
+	var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x  
+	if (obj.attachEvent) //if IE (and Opera depending on user setting)  
+    	obj.attachEvent("on"+mousewheelevt, handler, useCapture);  
+	else if (obj.addEventListener) //WC3 browsers  
+    	obj.addEventListener(mousewheelevt, handler, useCapture);
+
+	function handler(event) {
+		var delta = 0;	
+		var event = window.event || event ;
+		var delta =  event.detail ?  -event.detail/3 : event.wheelDelta/120;
+		if (event.preventDefault)
+					event.preventDefault();
+		event.returnValue = false;
+		return fn.apply(obj, [event, delta]);
+	}	
+}
+
+var myimages=[
+    "/images/liehuo_net_m1.jpg",
+    "/images/liehuo_net_m2.jpg",
+    "/images/liehuo_net_m3.jpg",
+	"/images/liehuo_net_m4.jpg"
+]
+var index = 0;
+var slideshow=document.getElementById("slide");
+function rotateimage(delta){
+    index=(delta<=-1)? index+1 : index-1 
+    index=(index<0)? myimages.length-1 : (index>myimages.length-1)? 0 : index;
+    slideshow.src = "" + myimages[index]
+}
+wheel(slideshow,function(e,delta){rotateimage(delta)},false);
+
+$('#slide_jquery').mousewheel(function(event, delta) {
+						index=(delta<=-1)? index+1 : index-1 
+   						index=(index<0)? myimages.length-1 : (index>myimages.length-1)? 0 : index;
+    					$(this).attr("src","" + myimages[index]);
+						return false; // prevent default
+					});
+var count = 10;
+var slide_zoom=document.getElementById("slide_zoom")		
+function zoom(delta){
+    if (delta >= 1)
+        Resize(++count);
+    else if (delta <= -1)
+        Resize(--count);   
+}
+function Resize(c){    
+    slide_zoom.style.width = (c + 100 )+ '%';
+	slide_zoom.style.height = (c + 100 )+ '%';
+}
+wheel(slide_zoom,function(e,delta){zoom(delta)},false);
+
+var count_1 = 10;
+$('#slide_zoom_jquery').mousewheel(function(event, delta) {
+						if (delta >= 1)
+       						++count_1;
+    					else if (delta <= -1)
+        					--count_1; 
+						$('#slide_zoom_jquery').css({"width":(count_1 + 100 )+ '%',"height":(count_1 + 100 )+ '%'});
+						return false; // prevent default
+					});
+
+})
+</script>
+</head>
+
+<body>
+<h2>Javascript中的onmusewheel事件</h2>
+<div class="wrap">
+	<div class="item">
+		<h3>一、用鼠标滚动轮换图片</h3>
+		<ol>
+			<li>
+				<h4>不使用jQuery插件的普通方法</h4>
+				<img src="images/liehuo_net_m4.jpg" id="slide" width="485">
+				<pre>var myimages=[
+	"/images/liehuo_net_m1.jpg",
+	"/images/liehuo_net_m2.jpg",
+	"/images/liehuo_net_m3.jpg",
+	"/images/liehuo_net_m4.jpg"
+]
+var index = 0;
+var slideshow=document.getElementById("slide");
+function rotateimage(delta){
+    index=(delta&lt;=-1)? index+1 : index-1 
+    index=(index&lt;0)? myimages.length-1 : (index&gt;myimages.length-1)? 0 : index;
+    slideshow.src = "" + myimages[index]
+}
+wheel(slideshow,function(e,delta){rotateimage(delta)},false);
+
+				</pre>
+			</li>
+			<li>
+				<h4>使用jQuery插件</h4>
+				<img src="images/liehuo_net_m4.jpg" id="slide_jquery" width="485">
+				<pre>var myimages=[
+	"/images/liehuo_net_m1.jpg",
+	"/images/liehuo_net_m2.jpg",
+	"/images/liehuo_net_m3.jpg",
+	"/images/liehuo_net_m4.jpg"
+]
+var index = 0;
+$('#slide_jquery').mousewheel(function(event, delta) {
+	index=(delta&lt;=-1)? index+1 : index-1 
+	index=(index&lt;0)? myimages.length-1 : (index&gt;myimages.length-1)? 0 : index;
+	$(this).attr("src","" + myimages[index]);
+	return false; // prevent default
+});
+				</pre>
+			</li>
+		</ol>
+	</div>
+	<div class="item">
+		<h3>一、用鼠标滚动缩放图片</h3>
+		<ol>
+			<li>
+				<h4>不使用jQuery插件的普通方法</h4>
+				<img style="width: 40%; height: 40%;" src="images/liehuo_net_m1.jpg" id="slide_zoom" width="485">
+				<pre>var count = 10;
+var slide_zoom=document.getElementById("slide_zoom")		
+function zoom(delta){
+	if (delta &gt;= 1)
+		Resize(++count);
+	else if (delta &lt;= -1)
+		Resize(--count);   
+}
+function Resize(c){    
+	slide_zoom.style.width = (c + 100 )+ '%';
+	slide_zoom.style.height = (c + 100 )+ '%';
+}
+wheel(slide_zoom,function(e,delta){zoom(delta)},false);
+				</pre>
+			</li>
+			<li>
+				<h4>使用jQuery插件</h4>
+				<img style="width: 26%; height: 26%;" src="images/liehuo_net_m1.jpg" id="slide_zoom_jquery" width="485">
+				<pre>var count_1 = 10;
+$('#slide_zoom_jquery').mousewheel(function(event, delta) {
+	if (delta &gt;= 1)
+		++count_1;
+	else if (delta &lt;= -1)
+		--count_1; 
+	$('#slide_zoom_jquery').css({"width":(count_1 + 100 )+ '%',"height":(count_1 
+	+ 100 )+ '%'});
+	return false; // prevent default
+});
+				</pre>
+			</li>
+		</ol>
+	</div>
+	<p>注：示例中用到的图片均来自互联网。</p>
+</div>
+<!-- Liehuo.Net Stat -->
+<div style="display:none;">
+<script type="text/javascript" src="images/stat.js"></script><script language="javascript" type="text/javascript" src="images/3353678.js"></script><a href="http://www.51.la/?3353678" target="_blank" title="51.la 专业、免费、强健的访问统计">网站统计</a>
+<img style="width: 0px; height: 0px;" src="images/go.htm"><script src="images/stat.htm" language="JavaScript" charset="gb2312"></script><a href="http://www.cnzz.com/stat/website.php?web_id=1375249" target="_blank" title="站长统计">站长统计</a><img src="images/stat.gif" border="0" height="0" width="0">
+</div>
+
+</body></html>

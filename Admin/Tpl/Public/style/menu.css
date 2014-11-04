@@ -1,0 +1,92 @@
+html ,body,#contentBody {height: 100%;}
+#sidebar {height: 98.5%;}
+body {
+font-size: 12px;
+font-family:"微软雅黑", "黑体", "宋体", arial,  Helvetica, sans-serif;
+}
+body {
+	padding:6px;
+	background-color:#DAE7F2;
+	width:100%;
+	height:100%}
+#sidebar {
+	border:1px solid #B2D1DD;
+	background-color:#F6F6F6;
+	background-image:url(../images/common/dot_white.gif);
+	background-repeat:repeat-y;
+	overflow:hidden;
+	width:188px}
+#sidebar .title {
+	height:28px;
+	line-height:28px;
+	padding-left:1px;
+	border-bottom:1px solid #B2D1DD}
+#sidebar .title .m_bg {
+	height:100%;
+	background-image:url(../images/frame/common_title_bg.gif);
+	background-repeat:repeat-x;
+	padding-left:13px}
+#sidebar .trees {
+	background-image:url(../images/common/dot_white.gif);
+	background-repeat:repeat-x;
+	background-position:0 bottom;
+	overflow:auto}
+#sidebar .trees .tree {
+	background-image:url(../images/common/dot_white.gif);
+	background-repeat:repeat-x;
+	border-bottom:1px solid lightGrey;
+	line-height:24px;
+	padding:9px 0;
+}
+#sidebar .trees .tree {
+	line-height:28px url(0)}
+#sidebar .trees .tree .nodes {
+	display:none;
+	overflow:hidden}
+#sidebar .trees .tree-expand .nodes {
+	display:block}
+#sidebar .trees .tree .nodes .node {
+	height:24px}
+#sidebar .trees .tree .nodes .node a {
+	background:url(../images/main/arrow_2.png) no-repeat 15px 7px;
+	padding-left:35px}
+#sidebar .trees .tree .nodes .node a {
+	padding-left:35px;
+	color:#000;
+	text-align:left}
+.blockTextLink a,.noHideBlockTextLink a {
+	display:block;
+	height:100%;
+	text-align:center}
+#sidebar .datacenter {
+	height:44px;
+	padding-left:1px;
+	border-bottom:1px solid #B2D1DD}
+#sidebar .datacenter .m_bg {
+	height:24px;
+	padding:9px 0 10px;
+	border-top:1px solid white;
+	background-color:#EDF7FF}
+#sidebar .datacenter .div-title {
+	float:left;
+	padding-left:13px}
+
+#sidebar .module {
+height: 34px;
+font-size:14px;
+line-height:34px;
+text-indent:10px;
+padding-left: 1px;
+border-top: 1px solid #fff;
+border-bottom: 1px solid #B2D1DD;
+background:#EDF7FF;
+}
+
+#sidebar .trees .tree .nodes .node a:hover{
+	color:#333333;
+	background-color:#DCF1FF
+}
+#sidebar .trees .tree .nodes .node a.current{
+	color:#FEFEFF;
+	background-color:#2292DD
+}

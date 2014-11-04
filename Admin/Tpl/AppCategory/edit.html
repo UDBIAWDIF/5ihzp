@@ -1,0 +1,160 @@
+<include file="Public:header" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<link rel="stylesheet" href="../Public/js/colorbox/colorbox.css" />
+<script charset="utf-8" src="../Public/js/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+	var imgUrlPrefix = '{$imgUrlPrefix}';
+	var thisSoftServerUrl = '{$thisSoftServerUrl}';
+	var thisImgServerUrl = '{$thisImgServerUrl}';
+	var separator = '{$Think.config.img_link_separator}';
+	var editor;
+	KindEditor.ready(function(K) {
+		editor = K.create('#app_cg_detail', {
+			allowFileManager : false,
+			uploadJson : "{:u('UpAttach/upKeditor', array(C('VAR_SESSION_ID') => $_COOKIE['PHPSESSID']))}",
+			formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+		});
+
+		//处理封面上传
+		var editorCovert;
+		K('#uploadIconButton').click(function() {
+			editorCovert = K.editor({
+				allowFileManager : false,
+				uploadJson : '{:u("AppCategory/upCover")}',
+				formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+			});
+			editorCovert.loadPlugin('insertfile', function() {
+				editorCovert.plugin.fileDialog({
+					fileUrl : K('#app_cg_icon_url').val(),
+					clickFn : function(url, title) {
+						K('#app_cg_icon').val(url);
+						K('#app_cg_icon_url').attr('src', realUrl(url));
+						editorCovert.hideDialog();
+					}
+				});
+			});
+		});
+	});
+
+	//等待窗口
+	function waitbox(showtext, close) {
+		if(close) {
+			$.colorbox.close();
+		} else {
+			if(!showtext) {showtext = '正在生成数据......';}
+			$.colorbox({
+				href : "../Public/images/load.gif",
+				title : showtext,
+				overlayClose : false
+			});
+		}
+	}//end waitbox()
+
+	$(function() {
+		//处理封面、ICON域名  $('#app_cg_icon_url').attr('src', realUrl(url));
+		var imgIconUrl = "{$vo.app_cg_icon}";
+		var imgIcon = $('#app_cg_icon_url').attr('src', realUrl(imgIconUrl));
+	});
+
+	//判断是否可能是个标准URL链接
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}//end isUrl
+
+	//如果 url 不是标准的 url ,就加上域名
+	function realUrl(url) {
+		var type = arguments[1] ? arguments[1] : 'img';
+		url = url.toString();
+		if(!isUrl(url)) {
+			switch (type) {
+				case 'soft' :
+					url = thisSoftServerUrl + url;
+					break;
+				case 'img' :
+					url = thisImgServerUrl + url;
+					break;
+			}
+		}
+		return url;
+	}//end realUrl()
+</script>
+	<div id="table" >
+		<form action="<empty name="vo.app_cg_id">__URL__/doAdd<else />__URL__/doEdit</empty>" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			<tr>
+				<th width="20%">分类名称:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_cg_name" id="app_cg_name" type="text" value="{$vo.app_cg_name}"/>
+					<span id="app_cg_name_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">父分类:</td>
+				<td width="80%">
+					<select name="app_cg_parid" id="app_cg_parid">
+						<option value='0'>顶级分类</option>
+						{:genCgTree($cgList,'app',$info)}
+					</select>
+					<span id="app_cg_parid_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">分类图标:</td>
+				<td width="80%">
+					<img name="app_cg_icon_url" id="app_cg_icon_url" src="{$vo.app_cg_icon_url}" class="imgLimitimg" />
+					<input name="app_cg_icon" id="app_cg_icon" type="hidden" value="{$vo.app_cg_icon}" require="true" datatype="require" placeholder="上传图标" msg="重要！请上传图标" />
+					<a href="#" class="btn" id="uploadIconButton">上传图标</a>
+					<span id="app_cg_icon_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">分类详细说明:</td>
+				<td width="80%">
+					<textarea name="app_cg_detail" id="app_cg_detail" cols="80" rows="5" style="width: 600px;">{$vo.app_cg_detail}</textarea>
+					<span id="app_cg_detail_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">分类排序:</td>
+				<td width="80%">
+					<input name="app_cg_order" id="app_cg_order" type="text" value="{$vo.app_cg_order}"/>
+					<span id="app_cg_order_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary"  name="Submit" value="确定<empty name="vo.app_cg_id">添加<else />修改</empty>" class="inputButton" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input name="app_cg_id" type="hidden" id="id" value="{$vo.app_cg_id}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

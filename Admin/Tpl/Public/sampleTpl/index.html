@@ -1,0 +1,97 @@
+<--include file="Public:header" />
+<script type="text/javascript" src="<TPL_PUBLIC>/js/datepicker/WdatePicker.js"></script>
+
+<div id="toolbar" class="clearfix">
+	<form action="{:U()}" method="get" class="form-inline" id="search-form">
+		<div class="items first">
+			<!-- 搜索条件 begin -->
+				<a name="add" class="btn addButton dialog" isMax="true" href="__-URL__/add/" ><i class="icon-plus"></i>添加新{<$title>}</a>
+
+				<label>ID:</label><input type="text" name="{<$id>}" id="{<$id>}" class="input-small" value="{$_REQUEST['{<$id>}']}">
+
+				<label for="{<$name_field>}" >名称:</label>
+				<input type="text" value="{<$request_name>}" name="{<$name_field>}" class="input-small" />
+
+				<!-- 添加时间 ：
+				<input type="text" onclick="WdatePicker()" value="{$_REQUEST['ctime']}" name="ctime" size="15" class="Wdate" readonly="readonly" />
+				到
+				<input type="text" onclick="WdatePicker()" value="{$_REQUEST['ctime']}" name="ctime" size="15" class="Wdate" readonly="readonly" /> -->
+				<input type="submit" class="btn btn-primary" value="搜索" />
+		</div>
+	</form>
+</div>
+<div class="clear"></div>
+<form action="__-URL__/exec" method="post" name="f1" id="f1" class="form-inline">
+	<div id="table" class="fl">
+		<table cellspacing="0">
+		<thead>
+			<tr class="sortable" sort="{$sort}" sortImg="{$sortImg}" currentOrder="{$order}" params="{$params}">
+				<th width="6%" class="first"><input name="checkbox" type="checkbox" class="checkbox" id="selectAll" value="全选"></th>
+
+			<volist name='fields' id='field'>
+				<th order="{<$field[0]>}" width="{<$field[2]|default='5'>}%">{<$field[1]>}</th>
+				<PHP></PHP>
+			</volist>
+				<th order="{<$status[0]>}">状态</th>
+				<th class="last">操作</th>
+			</tr>
+		</thead>
+		<tbody class="grid">
+	<--volist name="list" id="vo">
+			<tr>
+				<td>
+					<input name="id[]" type="checkbox" value="{$vo.{<$id>}}" class="checkbox">
+					<a href="__-URL__/edit/id/{$vo.{<$id>}}">{$vo.{<$id>}}&nbsp;</a>
+				</td>
+
+				<volist name='fields' id='field'>
+				<td>{$vo.{<$field[0]>}<notempty name='field[3]'>|{<$field[3]>}</notempty>}</td>
+				<PHP></PHP>
+				</volist>
+
+				<td>
+					<--notempty name="vo.{<$status[0]>}">{<$status[1]|default='上架'>}<--else /><font color='red'>{<$status[2]|default='下架'>}</font><--/notempty>
+				</td>
+				<td>
+					<a href="__-URL__/edit/id/{$vo.{<$id>}}" class="btn btn-mini dialog" isMax="true"><i class="icon-edit"></i>编辑</a>
+
+					<a href="__-URL__/exec/act/delete/id/{$vo.{<$id>}}" class="confirm btn btn-danger btn-mini"><i class="icon-trash icon-white"></i>删除</a>
+
+					<--neq name="vo['{<$status[0]>}']" value="0">
+						<a href="__-URL__/exec/act/lock/id/{$vo.{<$id>}}" class="btn btn-mini"><i class="icon-lock"></i>{<$status[2]|default='下架'>}</a>
+					<--/neq>
+					<--eq name="vo['{<$status[0]>}']" value="0">
+						<a href="__-URL__/exec/act/unlock/id/{$vo.{<$id>}}" class="btn btn-mini"><i class="icon-ok"></i>{<$status[1]|default='上架'>}</a>
+					<--/eq>
+				</td>
+			</tr>
+	<--/volist>
+		</tbody>
+		<tfoot>
+			<tr class="last">
+				<td colspan="9">
+					<div class="fl">
+						<select name="act" class="action2" >
+							<option value="none" selected>批量操作</option>
+							<option value="unlock">{<$status[1]|default='上架'>}</option>
+							<option value="lock">{<$status[2]|default='下架'>}</option>
+							<option value="delete">删除</option>
+						</select>
+						<input type="submit" value="提交操作" class="btn" id="submitButton" />
+					</div>
+					<div class="select green-black">
+						{$page}
+					</div>
+				</td>
+			</tr>
+		</tfoot>
+		</table>
+	</div>
+</form>
+<div id="ps">
+	<p>删除不可恢复,谨慎操作　内置管理员不允许删除及修改管理组</p>
+</div>
+<div class="clear"></div>
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<--include file="Public:footer" />

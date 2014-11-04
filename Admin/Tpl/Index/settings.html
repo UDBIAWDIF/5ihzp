@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>站点配置</title>
+        <link href="../Public/style/layout.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div id="container">
+                <form action="__URL__/doIndex" method="post" enctype="multipart/form-data">        
+            <table width="100%" border="0" cellpadding="4" cellspacing="0" class="form">
+
+                    <tr class="top">
+                        <td colspan="2" class="tit">站点配置</td>
+                    </tr>
+
+                    <tr>
+                        <th class="th" width="140px" valign="top">站点名称：</th>
+                        <td class="td"><input name="site_name" type="text" id="textfield" value="{$opt['site_name']}" /></td>
+                    </tr>
+                    <tr>
+                        <th class="th" width="140px" valign="top">是否启用名片：</th>
+                        <td class="td">
+                         <select name="tips" id="select">
+                   <option value="0"  <php>if($opt["tips"] == '0'){</php>  selected="true" <php>}</php> >关闭</option>
+                   <option value="1"  <php>if($opt["tips"] == '1'){</php>  selected="true" <php>}</php> >启用</option>
+
+                                                        </select>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">slogan：</th>
+                        <td class="td"><input name="slogan" type="text" id="textfield2" size="50" value="{$opt['slogan']}"/></td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">页面头信息描述：</th>
+                        <td class="td">
+                            <p><input name="site_header" type="text" id="textfield3" size="50" value="{$opt['site_header']}"/></p>
+                            <p>若有多个，用|分割</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">页面头信息关键字：</th>
+                        <td class="td">
+                            <p><input name="site_keyword" type="text" id="textfield4" size="50" value="{$opt['site_keyword']}"/></p>
+                            <p>若有多个，用|分割</p>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">选择模板：</th>
+                        <td class="td"><p>
+                                <select name="template" id="select">
+									<volist id="vo" name="themelist">
+									    <php>$isselected = (trim($vo['filename']) == $opt['template'])?'selected="true"':''</php>
+										<option value="{$vo.filename}" {$isselected}>{$vo.filename}</option>
+									</volist>
+                                </select>
+                            </p>
+                            <p>站点模板目录存放在 ./public/themes 下面。其中 blue 目录为默认风格，不能删除。 </p></td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">选择表情包：</th>
+                        <td class="td"><p>
+               
+                       <select id="smiletype" name="ico_type">
+                            <php>foreach( $smilelist as $vo){</php>
+                              <option value="{$vo['type']}" <php>if($vo['type'] == $opt['ico_type']) echo "selected";</php>>{$vo['type']}</option>
+                              <php>}</php>
+                          </select>
+                            </p>
+                            <p>站点表情放在 ./public/images/biaoqing 下面。          </p></td>
+                    </tr>
+                      <tr>
+                        <th class="th" valign="top">网站logo：</th>
+                        <td class="td">
+                        <p><a href="__THEME__/images/logo.jpg" target="_blank"><img src="__THEME__/images/logo.jpg"/></a></p>	
+                        <p>
+                            <input type="file" name="logo" value="" size="30"> <a href="http://thinksns.55.la" target="_blank">在线制作logo</a>(logo大小：137px × 40px)
+                            </p>
+                            </td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">站点联系邮箱：</th>
+                        <td class="td"><input name="email" type="text" id="textfield5" value="{$opt['email']}" /></td>
+                    </tr>
+
+                    <tr>
+                        <th class="th" valign="top">首页动态显示条数：</th>
+                        <td class="td"><input name="home_feed" type="text" id="textfield5" value="{$opt['home_feed']}" /></td>
+                    </tr>
+                    <th class="th" valign="top">动态优化选择：</th>
+                    <td class="td">
+                        <select name="feed_filter" id="select">
+                            <option value="mini"  <php>if($opt["feed_filter"] == 'mini'){</php>  selected="true" <php>}</php> >心情</option>
+                            <option value="group"  <php>if($opt["feed_filter"] == 'group'){</php>  selected="true" <php>}</php> >群组</option>
+                            <option value="share"  <php>if($opt["feed_filter"] == 'share'){</php>  selected="true" <php>}</php> >分享</option>
+                            <option value="photo"  <php>if($opt["feed_filter"] == 'photo'){</php>  selected="true" <php>}</php> >相册</option>
+                            <option value="blog"  <php>if($opt["feed_filter"] == 'blog'){</php>  selected="true" <php>}</php> >日志</option>
+                            <option value="vote"  <php>if($opt["feed_filter"] == 'vote'){</php>  selected="true" <php>}</php> >投票</option>
+                            <option value="event"  <php>if($opt["feed_filter"] == 'event'){</php>  selected="true" <php>}</php> >活动</option>
+                            <option value="friend"  <php>if($opt["feed_filter"] == 'friend'){</php>  selected="true" <php>}</php> >好友</option>
+                            <option value="app"  <php>if($opt["feed_filter"] == 'app'){</php>  selected="true" <php>}</php> >应用</option>
+                            <option value="user"  <php>if($opt["feed_filter"] == 'user'){</php>  selected="true" <php>}</php> >用户</option>
+                        </select>
+                        <input name="feed_filter_count" type="text" value="{$opt['feed_filter_count']}" />
+                        </td>
+                    </tr>
+                         
+                    </tr>
+
+                    <tr>
+                        <th class="th" valign="top">ICP/IP/域名备案：</th>
+                        <td class="td"><p>
+                                <input name="icp" type="text" id="textfield6" value="{$opt['icp']}" />
+                            </p>
+                            <p>			            (例如 京ICP备04000001号，显示在所有页面的最下面)</p></td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">举报可选理由：</th>
+                        <td class="td"><p>
+                                <textarea name="report_reason" cols="50" id="textfield7">{$opt['report_reason']}</textarea>
+                            </p>
+                            <p>预设举报可选理由，多个请用,隔开 </p></td>
+                    </tr>
+                    <tr>
+                        <th class="th" valign="top">站点关闭访问：</th>
+                        <td class="td"><input type="radio" name="site_close" id="radio" value="1" class="radio" <php>if($opt["site_close"] == 1){</php>  checked="true" <php>}</php>/>
+						    是  
+                                <input type="radio" name="site_close" id="radio2" value="0" class="radio" <php>if($opt["site_close"] == 0){</php>  checked="true" <php>}</php>/>
+						      否</td>
+                                    </tr>
+                                    <tr>
+
+                                        <tr>
+                                            <th class="th" valign="top">是否显示随便看看：</th>
+                                            <td class="td"><input type="radio" name="guest" id="radio" value="1" class="radio" <php>if($opt["guest"] == 1){</php>  checked="true" <php>}</php>/>
+						    是  
+                                                    <input type="radio" name="guest" id="radio2" value="0" class="radio" <php>if($opt["guest"] == 0){</php>  checked="true" <php>}</php>/>
+						      否</td>
+                                                        </tr>
+
+						<tr>
+						  <th class="th" valign="top">IM是否开启：</th>
+						  <td class="td"><input type="radio" name="is_im_open" id="radio" value="1" class="radio" <php>if($opt["is_im_open"] == 1){</php>  checked="true" <php>}</php>/>
+						    是  
+						      <input type="radio" name="is_im_open" id="radio2" value="0" class="0" <php>if($opt["is_im_open"] == 0){</php>  checked="true" <php>}</php>/>
+						      否</td>
+		    </tr>			                 <tr>
+                        <th class="th" width="160" valign="top">页面开启验证码功能：</th>
+                        <td class="td"><p>
+                                <input name="verify[login]" value="1" type="checkbox" class="checkbox" <php>if($verify["login"] == "1"){</php> checked="checked" <php>}</php>/>
+                                登录页面
+                                <input name="verify[reg]" value="1" <php>if($verify["reg"] == "1"){</php> checked="checked" <php>}</php> type="checkbox" class="checkbox" />
+                            注册页面 </p>
+                            </td>
+                    </tr>
+                                                        <tr>
+
+                                                            <th class="th" valign="top">关闭访问理由：</th>
+                                                            <td class="td"><textarea name="site_close_reason" cols="50" id="textfield9">{$opt['site_close_reason']}</textarea></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th valign="top">&nbsp;</th>
+                                                            <td class="td"><input type="submit" class="button" id="button" value="提交" /></td>
+                                                        </tr>
+
+                                                        </table>
+	 													</form>                                   
+                                                        </div>
+                                                        </body>
+                                                        </html>

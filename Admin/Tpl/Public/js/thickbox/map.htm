@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>SOSOMap</title>
+</head>
+<style type="text/css">
+#container{width:646px;height:530px;}
+</style>
+<script charset="utf-8" src="http://api.map.soso.com/v1.0/main.js"></script>
+<script type="text/javascript">
+var map;
+//创建marker
+var markerStack=[];
+function init(){
+    var center=new soso.maps.LatLng(25.432356,119.012842);
+    map=new soso.maps.Map(document.getElementById("container"),{
+        center:center,
+        zoomLevel:16
+    })
+    map.setScrollWheel(true);
+    map.setKeyBoard(true);
+    map.setDraggable(true);
+    map.setZoomInByDblClick(true);
+    var navControl = new soso.maps.NavigationControl({
+        align: soso.maps.ALIGN.TOP_LEFT,
+        style:soso.maps.NavigationControlStyle.NORMAL,
+        margin: new  soso.maps.Size(5, 15),
+        map: map
+    });
+    var scaleControl = new soso.maps.ScaleControl({
+        align: soso.maps.ALIGN.BOTTOM_LEFT,
+        margin: new  soso.maps.Size(10, 15),
+        map: map
+    });
+
+   
+    var infoWin = new soso.maps.InfoWindow({
+        map: map
+    });
+    var anchor0= new soso.maps.Point(10, 30),
+        size0 = new soso.maps.Size(20, 30),
+        icon0= new soso.maps.MarkerImage(
+            "http://api.map.soso.com/doc/img/mar_img5.png",
+            size0,
+            anchor0),
+        marker0 = new soso.maps.Marker({
+            icon: icon0,
+            map:map,
+            position:new soso.maps.LatLng(25.432007,119.012070)
+        });
+        marker0.BZ="我的备注";
+        marker0.label = new soso.maps.Label({
+            content:"大唐",
+            map:map
+        });
+    markerStack.push(marker0);
+    soso.maps.Event.addListener(marker0,"click",function(){
+        infoWin.open(
+            "<div style='width:237px;height:152px;'>"+
+                "<div style='color:red;'>大唐</div>"+
+               "<div style='margin-top:10px;'>"+
+                   "<div style='width:232px;"+
+                   "height:100px;overflow:auto;border:1px solid #ddd;"+
+                   "background:#fff;font-size:12px;'>"+
+                   "我的备注"+
+                   "</div>"+
+               "</div>"+
+           "</div>",this);
+    });
+    resetML(markerStack)
+    soso.maps.Event.addListener(map,"zoomlevel_changed",function(){
+        resetML(markerStack)
+    });
+    //重新设置labelk和marker之间的距离
+    function resetML(arr){
+        if(arr.length!=0){
+            each(arr,function(n){
+                var point=map.fromLatLngToContainerPixel(this.getPosition());
+                var pointN=new soso.maps.Point(point.getX()+12,point.getY()-10);
+                this.label.setPosition(map.fromContainerPixelToLatLng(pointN));
+             });
+        }
+    }
+    //对数组进行遍历
+    function each(arr,fn){
+        for(var n=0;n<arr.length;n++){
+            fn.call(arr[n],n);
+        }
+    }
+    
+   
+    
+}
+function addMarker(){
+	alert('cccc');
+	
+	
+	
+}
+window.onload=init;
+</script>
+<body>
+<div id="container"></div>
+<input type="button" onclick="addMarker()" value="调用函数">
+</body>
+</html>

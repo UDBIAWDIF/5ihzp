@@ -1,0 +1,173 @@
+<include file="Public:head" />
+	<link rel="stylesheet" type="text/css" href="__HOME__PageWin/style.css" />
+	<script type="text/javascript" src="__HOME__PageWin/script.js"></script>
+	<script type="text/javascript">
+		var scriptCfg = {waterfallBottom:200};
+		$(function () {
+			var morepic = $('.morepic');
+			scriptCfg.waterfallBottom += $('.footer').height();
+			$(window).bind("scroll", function() {
+				if($(document).scrollTop() + $(window).height() > $(document).height() - scriptCfg.waterfallBottom) {
+					morepic.trigger("click");
+				}
+			});
+
+			$("#li1").mouseover(function () {
+				$(".tabli").removeClass("cur");
+				$(".topuser").hide();
+				$(".thumpuptop").show();
+				$(this).addClass("cur");
+			});
+			$("#li2").mouseover(function () {
+				$(".tabli").removeClass("cur");
+				$(".topuser").hide();
+				$(".fanstop").show();
+				$(this).addClass("cur");
+			});
+			$("#li3").mouseover(function () {
+				$(".tabli").removeClass("cur");
+				$(".topuser").hide();
+				$(".groupthumpuptop").show();
+				$(this).addClass("cur");
+			});
+			$("#li1").triggerHandler('mouseover');
+
+			var picShowUrlTpl	= "{:U('Pic/show', array('id' => 'picidholder'))}";
+			$(".picshow, .moremsg").click(function() {
+				var picId		= $(this).attr('picid');
+				var picShowUrl	= picShowUrlTpl.replace('picidholder', picId);
+				document.getElementById('dialogimgifr').src = picShowUrl;
+				openForm('dialogimg', '', 1030, 550, '');
+			});
+
+			$('.piclistparent').on('click', '.morecomment', function(event) {
+				var morecomment = $(event.currentTarget);
+				$.get(
+					"{:U('Pic/queryComment')}",
+					{
+						id:		morecomment.attr('picid'),
+						start:	3
+					},
+					function(data) {
+						var morecommentUl = morecomment.parent().parent();
+						morecomment.parent().remove();
+						morecommentUl.append(data);
+					}
+				);
+			});
+
+			var morepicOnLoad = false;
+			morepic.click(function() {
+				lastpic = $('.lastpicid:last').attr('lastpicid');
+				if(!morepicOnLoad && 0 != lastpic) {
+					morepicOnLoad = true;
+					pictag	= $('.lastpicid:last').attr('pictag');
+					indcate	= $('.lastpicid:last').attr('indcate');
+					$.get(
+						"{:U('Index/morepic')}",
+						{
+							lastpic:	lastpic,
+							tag:		pictag,
+							indcate:	indcate,
+						},
+						function(data) {
+							// $(data).insertBefore(morepic);
+							// morepic.before(data);
+							$('.piclistparent').append(data);
+							morepicOnLoad = false;
+						}
+					);
+				} else {
+					morepic.text('已到最后！');
+					morepic.removeAttr("onclick");
+				}
+			});
+		});
+	</script>
+</head>
+<body>
+<include file="Public:nav_top" />
+	<div class="bodydiv">
+		<div class="floatleft leftdiv alignright piclistparent">
+<include file="index_piclist" />
+		</div>
+		<div class="floatleft rightdiv alignleft">
+			<ul class="marginleft20">
+				<li class="height30 bold">下载手机客户端</li>
+				<li class="height150">
+					<img src="__HOME__images/5ihzp_2dcode.png" class="code floatleft" />
+				</li>
+				<li class="margintop20">
+
+					<ul class="tab marginleft1 height40">
+						<li class="tabli cur" id="li1">TOP赞</li>
+						<li class="tabli" id="li2">关注</li>
+						<li class="tabli" id="li3">圈子</li>
+					</ul>
+
+					<ul class="displaynone topuser thumpuptop">
+						<volist name="topThumbupList" id="topThumbup" key="idx" offset="0" length="3"><li>
+							<label class="paddingleft5 marginright10">{$idx}</label>
+							<label class="name">{$topThumbup.u_name}</label>
+							<label class="count">{$topThumbup.thumbup_count}</label>
+						</li></volist>
+					</ul>
+
+					<ul class="displaynone topuser fanstop">
+						<volist name="topFansList" id="topFans" key="idx" offset="0" length="3"><li>
+							<label class="paddingleft5 marginright10">{$idx}</label>
+							<label class="name">{$topFans.u_name}</label>
+							<label class="count">{$topFans.like_count}</label>
+						</li></volist>
+					</ul>
+
+					<ul class="displaynone topuser groupthumpuptop">
+						<volist name="topGroupList" id="topGroup" key="idx" offset="0" length="3"><li>
+							<label class="paddingleft5 marginright10">{$idx}</label>
+							<label class="name">{$topGroup.g_name}</label>
+							<label class="count">{$topGroup.g_user_count}</label>
+						</li></volist>
+					</ul>
+
+				</li>
+				<li class="height30 margintop20 bold">Hot TAG</li>
+				<li class="hot">
+					<volist name="picTagList" id="picTag">
+						<a href="{:U('Index/index', array('tag' => $picTag['pt_id']))}">{$picTag.pt_name}</a>
+					</volist>
+				</li>
+			</ul>
+		</div>
+
+		<!--右边四按钮-->
+		<div id="index_cate_div">
+			<ul>
+				<li><a class="indpic" href="{:U('Index/index')}"></a></li>
+			</ul>
+			<ul>
+				<li><a class="special_index indeye" href="javascript:void(0);" realhref="{:U('Index/index', array('indcate' => 'thumbup'))}"></a></li>
+			</ul>
+			<ul>
+				<li><a class="special_index indheart" href="javascript:void(0);" realhref="{:U('Index/index', array('indcate' => 'like'))}"></a></li>
+			</ul>
+			<ul>
+				<li><a class="special_index induser" href="javascript:void(0);" realhref="{:U('Index/index', array('indcate' => 'group'))}"></a></li>
+			</ul>
+		</div>
+		<!--右边四按钮-->
+
+		<div class="floatleft leftdiv alignright">
+			<div class="divload morepic">
+				继续加载...
+			</div>
+<include file="Public:aboutus" />
+		</div>
+	</div>
+
+	<div id="dialogimg" style="display: none;">
+		<iframe id='dialogimgifr' name='dialogimgifr' src="" marginheight='0' frameborder='0' scrolling='no'
+			width='1002' height='450'></iframe>
+	</div>
+
+<include file="Public:regloginfr,Public:usermsg" />
+<include file="Public:foot" />

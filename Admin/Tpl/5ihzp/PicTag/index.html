@@ -1,0 +1,29 @@
+<include file="Public:head" />
+
+<body>
+	<div class="padding10 heightli30">标签数：{$count}<a class="floatright linkbtn" href="{:U('add')}">+ 新增标签</a></div>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="paddinglr10">
+		<tr>
+			<td>
+				<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#c9c9c9">
+					<tr class="tr_title">
+						<td width="20%"><div><span class="style1">名称</span></div></td>
+						<td width="20%"><div><span class="style1">排序</span></div></td>
+						<td width="20%"><div><span class="style1">操作</span></div></td>
+					</tr>
+					<volist name="list" id="vo"><tr class="tr_list">
+						<td><div><span class="style3">{$vo.pt_name}</span></div></td>
+						<td><div><span class="style3">{$vo.pt_order}</span></div></td>
+						<td><div class="style5"><a href="{:U('exec', array('act'=>'delete','id'=>$vo['pt_id']))}">删除</a></div></td>
+					</tr></volist>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td height="35">
+				{$page}
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

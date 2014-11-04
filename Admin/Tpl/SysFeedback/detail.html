@@ -1,0 +1,70 @@
+<include file="Public:header" />
+	<div id="table" >
+		<form onsubmit="return checkNotNull();" action='<empty name="vo.id">__URL__/doAdd<else />__URL__/doEdit</empty>' method="POST" name="f1" id="mainform" <notempty name="vo.id">class="noReflesh"</notempty>>
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr>
+				<th width="20%">用户:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<img name="head_url" id="head_url" src="{$customer.head|getFileUrlOnSite}" class="imgLimitimg" />{$customer.name}
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">昵称:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					{$customer.nickname}
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">真实姓名:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					{$customer.realname}
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">联系方式:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					{$vo.contact}
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">反馈内容:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					{$vo.content}
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">反馈时间:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					{$vo.ctime|date='Y-m-d H:i:s',###}
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input type="hidden" name="app_os" value="2" />
+					<input name="id" id="id" type="hidden" value="{$vo.id}" />
+					<input name="type" id="type" type="hidden" value="app" />
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

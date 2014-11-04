@@ -1,0 +1,43 @@
+<include file="Public:head" />
+	<script type="text/javascript">
+		$(function () {
+			$("#li1").click(function () {
+				$(".tabli").removeClass("cur");
+				$(this).addClass("cur");
+				$(".noreadmsg").show();
+				$(".readmsg").hide();
+			});
+			$("#li2").click(function () {
+				$(".tabli").removeClass("cur");
+				$(this).addClass("cur");
+				$(".noreadmsg").hide();
+				$(".readmsg").show();
+			});
+		});
+	</script>
+</head>
+<body>
+	<div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;">
+		<div class="aligncenter width100">
+			<ul class="tab1 marginleft1 height30">
+				<li class="tabli cur" id="li1">未读消息({:count($noReadList)})</li>
+				<li class="tabli" id="li2">已读消息({:count($readList)})</li>
+				<li class="tabli1">&nbsp;</li>
+			</ul>
+		</div>
+
+		<div class="alignleft width100 noreadmsg" style="overflow-y:scroll;height:260px; padding-right:10px;">
+			<ul class="width100"><volist name="noReadList" id="msg">
+				{:W('MsgRow', $msg)}
+			</volist></ul>
+		</div>
+
+		<div class="alignleft width100 readmsg" style="overflow-y:scroll;height:260px; padding-right:10px;display:none;">
+			<ul class="width100"><volist name="readList" id="msg">
+				{:W('MsgRow', $msg)}
+			</volist></ul>
+		</div>
+
+	</div>
+</body>
+</html>

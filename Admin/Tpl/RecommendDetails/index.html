@@ -1,0 +1,101 @@
+<include file="Public:header" />
+
+<style type="text/css">
+ul{list-style: none;}
+</style>
+	<div id="toolbar" class="clearfix">
+			<div class="items">
+				<form action="{:U()}" method="get" class="form-inline">
+					<label>ID:</label><input type="text" name="rd_ref_id" id="rd_ref_id" class="input-small" value="{$_REQUEST['rd_ref_id']}">
+					<select name="rd_ref_type">
+						<option value="1" <eq name="_REQUEST.rd_ref_type" value="1">selected</eq>>应用</option>
+						<option value="0" <eq name="_REQUEST.rd_ref_type" value="0">selected</eq>>文章</option>
+					</select>
+					<select name="platform">
+						<option value="3" <eq name="_REQUEST.platform" value="3">selected</eq>>Android</option>
+						<option value="">全部</option>
+						<option value="1" <eq name="_REQUEST.platform" value="1">selected</eq>>iPhone</option>
+						<option value="2" <eq name="_REQUEST.platform" value="2">selected</eq>>iPad</option>
+					</select>
+					<input type="hidden" name="rid" value="{$_REQUEST['rid']}" />
+					<input type="submit" name="submit" class="btn" value="查询">
+					<a href="javascript:history.go(-1)" class="btn">返回</a>
+				</form>
+			</div>
+		</div>
+		<div class="clear"></div>
+		<form action="__URL__/exec" method="post">
+		<div id="table" class="fl">
+			<table cellspacing="0">
+			<thead>
+				<tr>
+					<th  width="5"  class="first"><input name="checkbox" type="checkbox" class="checkbox" id="selectAll" value="选择"></th>
+					<th>ID</th>
+					<th width="10%">图标</th>
+					<th width="25%">名称</th>
+					<th width="10%">平台</th>
+					<th width="10%">类型</th>
+					<th width="5%">位次</th>
+					<th width="15%">生效时间</th>
+					<th width="15%">失效时间</th>
+					<th width="15%" class="last">操作</th>
+				</tr>
+			</thead>
+			<tbody class="grid">
+<volist name="list" id="vo">
+				<tr>
+					<td><input name="id[]" type="checkbox" value="{$vo.rd_id}" class="checkbox"></td>
+					<td>{$vo.rd_ref_id}&nbsp;</td>
+					<td><notempty name="vo.rd_ref_icon"><img src="{$vo.rd_ref_icon_url}" class="iconLimit"/></notempty></td>
+					<td>{$vo.rd_name}</td>
+					<td>
+						<eq name="vo.app_os" value="2">Android</eq>
+						<eq name="vo.app_os" value="1">
+							<eq name="vo.app_ios_type" value="3">IOS</eq>
+							<eq name="vo.app_ios_type" value="1">iPhone</eq>
+							<eq name="vo.app_ios_type" value="2">iPad</eq>
+						</eq>
+						<if condition="strstr($vo['art_os_types'], '1')">iPhone,</if>
+						<if condition="strstr($vo['art_os_types'], '2')">iPad,</if>
+						<if condition="strstr($vo['art_os_types'], '3')">Android,</if>
+					</td>
+					<td><eq name="vo.rd_ref_type" value="0">文章<else />软件</eq></td>
+					<td><input refId="{$vo.rd_id}" setOrderUrl="__APP__/RecommendDetails/setOrder" class="ajaxOrder input-mini" value="{$vo.rd_order}" size="5" /></td>
+					<td>{$vo.rd_release}</td>
+					<td>{$vo.rd_expired}</td>
+					<td>
+						<a href="__URL__/edit/id/{$vo.rd_id}"><img src="../Public/images/edit-icon.gif" alt="Edit" title="修改" /></a>
+						<a href="__URL__/exec/act/delete/id/{$vo.rd_id}/rid/{$vo.rd_rm_id}" class="confirm"><img src="../Public/images/hr.gif" alt="Delete" title="删除" /></a>
+					</td>
+				</tr>
+</volist>
+			</tbody>
+			<tfoot>
+				<tr class="last">
+					<td colspan="9">
+						<div class="fl">
+							<select name="act" class="input-small" >
+								<option value="none" selected>批量操作</option>
+								<option value="delete">删除</option>
+							</select>
+							<input type="submit" value="提交操作" class="btn" id="submitButton" />
+						</div>
+						<div class="select green-black">
+							{$page}
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+			</table>
+		</div>
+		<input type="hidden" name="rid" value="{$_REQUEST['rid']}" />
+		</form>
+		<div id="ps">
+			<p>删除不可恢复,谨慎操作　内置管理员不允许删除及修改管理组</p>
+		</div>
+	</div>
+</div>
+<div class="clear"></div>
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />

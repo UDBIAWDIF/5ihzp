@@ -1,0 +1,102 @@
+<include file="Public:header" />
+		<div id="table" class="small">
+			<span class="divleft"></span>
+			<span class="divright"></span>
+			<form action="__URL__/doAdd" method="POST">
+				<table class="edit"  cellspacing="0">
+					<thead>
+						<tr>
+							<th colspan="2" class="full" style='text-align:center;'>添加配置选项</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr>
+							<th width="30%" style='text-align:center;'>配置标题</th>
+							<td width="70%"><input name="title" type="text" value="" />*</td>
+						</tr>
+						<tr>
+							<th width="30%" style='text-align:center;'>所属模块</th>
+							<td width="70%"><input name="module" type="text" value="" /></td>
+						</tr>
+						<tr>
+							<th width="30%" style='text-align:center;'>控件类型</th>
+							<td width="70%">
+								<select name="type">
+									<foreach name='Think.CONFIG.SETTING_INPUT_TYPE' item='wvo' key="key">
+										<option value="{$key}" class="typeoption">{$wvo}</option>
+									</foreach>
+								</select>
+							</td>
+						</tr>
+
+						<tr>
+							<th width="30%" style='text-align:center;'>字段名</th>
+							<td width="70%"><input name="name" type="text" value=""/>*</td>
+						</tr>
+						<tr>
+							<th width="30%" style='text-align:center;'>值</th>
+							<td width="70%" class='controltype'><input name="value" type="text" value=""/></td>
+						</tr>
+						<tr>
+							<th width="30%" style='text-align:center;'>排序</th>
+							<td width="70%"><input name="order" type="text" value="0" /></td>
+						</tr>
+						<tr>
+							<th width="30%" style='text-align:center;'>描述</th>
+							<td width="70%"><textarea name="description" cols="55" rows="10"></textarea></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2" style='text-align:center;'>
+								<input type="submit" class="btn" value="确定新增"/>
+								<input type="button" class="btn" name="add" value="返回" onclick="javascript:history.go(-1);" />
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("select[name=type]").change(function(){
+		var type = $(this).val();
+		var textfield = '<input name="value" type="text" value=""/>';
+		var toggle = '<div class="toggle ">';
+			toggle += '<span class="thumb"></span>';
+			toggle += '<span class="toggleOn">打开</span>';
+			toggle += '<span class="toggleOff">关闭</span>';
+			toggle += '<input type="hidden" name="value" value="0" id="value" />';
+			toggle += '</div>';
+		var multi = '<textarea name="value" rows="7" cols="40"></textarea>';
+			multi += '<br/>请按 <span style="color:red;" >键:值</span> 格式输入<br/>';
+			multi += '例如<br/>1:有意向<br/>2:已签单<br/>3:已付款<br/>';
+
+
+		var datepicker = '<input name="value" type="text" value="" class="wdate" onclick="WdatePicker()"/>';
+		switch(type){
+			case '1':
+				$('.controltype').html(textfield);
+				break;
+			case '2':
+				$('.controltype').html(toggle);
+				break;
+			case '3':
+			case '4':
+			case '5':
+				$('.controltype').html(multi);
+				break;
+			case '6':
+				$('.controltype').html(datepicker);
+				break;
+			default:
+				break;
+		}
+	});
+});
+</script>
+
+<include file="Public:footer" />

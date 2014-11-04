@@ -1,0 +1,68 @@
+<include file="Public:header" />
+<!-- 主页面区域 -->
+
+<div id="table">
+	<form action="__URL__/doAdd" method="POST" id="mainform">
+	<table class="edit"	cellspacing="0">
+	<thead>
+		<tr>
+			<th colspan="2" class="full">添加用户</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<th align="right" width="25%">用 户 名：</th>
+			<td><input name="username" type="text" value="{$vo.username}"  size="50"/></td>
+		</tr>
+		<tr>
+		  <th align="right" width="25%">笔名：</th>
+		  <td><input name="penname" type="text" value="{$vo.penname}"/>							</td>
+		</tr>
+		<tr>
+			<th align="right" >密　码：</th>
+			<td><input name="password" type="password" value=""  size="50"/> *</td>
+		</tr>
+		<tr>
+			<th align="right" >确认密码：</th>
+			<td><input name="password2" type="password" value=""  size="50"/> *</td>
+		</tr>
+		<tr>
+			<th align="right"  width="25%">真实姓名：</td>
+			<td><input name="realname" type="text" value="{$vo.realname}"  size="50"/></td>
+		</tr>
+		<tr>
+			<th align="right" >权限组：</th>
+			<td>
+				<select name="gid" id="select">
+					<volist name="list" id="row">
+					<option value="{$row.id}" <eq name="row.id" value="$vo['gid']">selected</eq>>{$row.name}</option>
+					</volist>
+			</select>
+		* </td>
+		</tr>
+		<tr>
+			<th align="right" >描　述：</th>
+			<td><input name="remark" type="text" value="{$vo.remark}"  size="50"/></td>
+		</tr>
+		<tr>
+			<th align="right" >状　态：</th>
+			<td>
+				<input type="radio" name="status" value="1" checked=checked />启用
+				<input type="radio" name="status" value="0" />锁定
+			</td>
+		</tr>
+	</tbody>
+		<tfoot>
+		<tr>
+			<td colspan="2" align="center">
+				<input type="submit" class="btn" name="Submit" value="修改" />
+				<input type="button" class="btn btnClose" name="add" value="返回" />
+			</td>
+		</tr>
+		</tfoot>
+	</table>
+	</form>
+</div>
+
+<!-- 主页面结束 -->
+<include file="Public:footer" />

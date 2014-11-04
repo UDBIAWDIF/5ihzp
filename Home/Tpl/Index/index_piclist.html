@@ -1,0 +1,84 @@
+﻿<notempty name="list">
+		<PHP>$picList = $list;$uid = getUid();</PHP>
+		<volist name="picList" id="pic">
+			<div class="sharelist">
+				<ul class="lefthead">
+					<li class="height50" onclick="window.location='{:U('User/piclist', array('uid' => $pic['u_id']))}'">
+						<img src="{$pic.u_icon_id|getUserHeadById}" class="userhead marginright20 floatright" />
+						<label class="fontcolor4c9ed9 floatright marginright10 fontsize14 paddingtop2">
+							{$pic.u_name}</label><br />
+						<label class="fontcolor999 marginright10 clock paddingtop2">
+							<a>&nbsp;</a>{$pic.pic_format_createtime|substr=-8,5}</label>
+					</li>
+					<li class="height40 marginright20">
+						<label class="map">
+							<a>&nbsp;</a>{$pic.region_name}</label></li>
+					<li class="height30 marginright20">
+						<neq name="pic.u_id" value="$uid">
+						<a class="subadd likeuser" href="{:U('User/like', array('uid' => $pic['u_id']))}" uid="{$pic['u_id']}">
+						<switch name="pic.u_id|likeStatus">
+							<case value="1">已关注</case>
+							<case value="2">相互关注</case>
+							<default />关&nbsp;注
+						</switch>
+						</a>
+						</neq>
+					</li>
+				</ul>
+				<ul class="centercontent">
+					<li class="picshow" picid="{$pic.pic_id}">
+						<img class="cursor_ptr" src="{$pic.pic_path|getImgUrlOnSite|getSmallImgUrl}" width="500" />
+					</li>
+					<li class="width100 backgroundf5f5f5 height40 topborder1 bottomborder1" style="margin-top:-4px;">
+						<div class="floatleft rightborder1">
+							<a class="clickheart" href="{:U('User/thumbuppic', array('pic' => $pic['pic_id']))}">
+								<label class="heartcount">
+									{$pic.pic_thumbup_count}
+								</label></a>
+						</div>
+						<div class="floatleft paddingleft10">
+							<PHP>$whoLike = whoLikePic($pic['pic_id']);</PHP>
+							<NOTEMPTY name="whoLike">
+							<label class="fontcolor007acc">
+								<volist name="whoLike" id="who" offset="0" length="3" key="listOrder">
+									<NEQ name="listOrder" value="1">、</NEQ><a href="{:U('User/piclist', array('uid' => $who['u_id']))}">{$who.u_name}</a>
+								</volist>
+							</label>，赞了这张照片。
+							<ELSE />
+							还没有人赞这张照片。
+							</NOTEMPTY>
+						</div>
+						<div class="floatright leftborder1">
+							<a class="moremsg cursor_ptr" picid="{$pic.pic_id}"></a>
+						</div>
+					</li>
+					<li class="width100 backgroundfff height40 bottomborder1">
+						<form class="commentform" action="{:U('User/commentpic')}" method="POST" picid="{$pic.pic_id}">
+							<div class="alignleft paddingleft10">
+								<input type="hidden" name="pic" value="{$pic.pic_id}" />
+								<input type="text" name="comment" value="" class="msg" />
+								<input class="submsg" type="submit" value="评 论" />
+							</div>
+						</form>
+					</li>
+					<li class="width100 backgroundfff">
+						<div class="alignleft paddingleft10">
+							<ul class="list commentlist" picid="{$pic.pic_id}">
+								<PHP>$commentlist = $pic['commentlist']</PHP>
+								<include file="Pic:comment" />
+								<li><gt name="pic.commentCount" value="3">
+									后面还有{$pic['commentCount'] - 3}条评论，
+									<label class="fontcolor007acc morecomment" picid="{$pic.pic_id}" start="3">查看&gt;&gt;</label><else />
+									没有更多评论
+									</gt>
+								</li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</volist>
+		<span class="displaynone lastpicid" lastpicid="{$pic.pic_id}" pictag="{$Think.request.tag}" indcate="{$Think.request.indcate}"></span>
+<else />
+		<span class="displaynone lastpicid" lastpicid="0"></span>
+</notempty>

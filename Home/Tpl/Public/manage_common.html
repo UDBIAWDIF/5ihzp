@@ -1,0 +1,29 @@
+<include file="Public:head" />
+	<link rel="stylesheet" type="text/css" href="__HOME__PageWin/style.css" />
+	<script type="text/javascript" src="__HOME__PageWin/script.js"></script>
+</head>
+<body>
+<include file="Public:nav_top" />
+	<div class="bodydiv">
+		<div class="margintop30">
+			<div style="width:150px; float:left;">
+				<ul>
+					<PHP>$user = getUser();</PHP>
+					<li><img src="{$user.u_icon_id|getUserHeadById}" width="150" /></li>
+					<li class="height30"><label class="floatleft">{:getUname()}</label><a class="floatright fontcolor4c9ed9" onclick="javascript:openForm('dialogmodify','修改资料',600,400,'')">修改资料</a></li>
+					<li class="height80">
+						<div class="headcount1">
+							<div class="radiustopleft radiusbottomleft">
+								<p class="fontsize10">{$user.u_pic_count}</p>
+								<p class="fontcolor999">照片</p>
+							</div>
+							<div>
+								<p class="fontsize10">{$user.u_like_user_count}</p>
+								<p class="fontcolor999">关注</p>
+							</div>
+							<div class="radiustopright radiusbottomright">
+								<p class="fontsize10">{$user.u_fans_count}</p>
+								<p class="fontcolor999">粉丝</p>
+							</div>
+						</div>
+					</li>

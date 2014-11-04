@@ -1,0 +1,124 @@
+<include file="Public:header" />
+
+<div id="container">
+	<div id="header">
+		<div class="title">查看最新版本</div>
+		<div class="operate">
+		</div>
+	</div>
+	<div id="content">
+		<div id="toolbar" class="clearfix">
+			<div class="items first">
+			</div>
+		</div>
+		<form action="__URL__/exec" method="post" name="f1" id="f1">
+		<div id="table" class="fl">
+			<table cellspacing="0">
+
+			<thead>
+				<tr>
+					<th class="first" width="25"><input name="checkbox" type="checkbox" class="checkbox" id="selectAll" value="选择"></th>
+					<th align="left">
+						<a href="__URL__/index/_order/app_id/_sort/{$sort}">
+							<span class="fl">ID</span>
+							<span class="sort <eq name="sort" value="app_id">{$order}</eq>"></span>
+						</a>
+					</th>
+					<th align="left">
+						<a href="__URL__/index/_order/app_name/_sort/{$sort}">
+							<span class="fl">软件名称</span>
+							<span class="sort <eq name="sort" value="app_name">{$order}</eq>"></span>
+						</a>
+					</th>
+					<th align="left">
+						<a href="__URL__/index/_order/app_os/_sort/{$sort}">
+							<span class="fl">平台</span>
+							<span class="sort <eq name="sort" value="app_os">{$order}</eq>"></span>
+						</a>
+					</th>
+					<th align="left">
+						<span class="fl">版本</span>
+					</th>
+					<th align="left">
+						<span class="fl">最新版本</span>
+					</th>
+					<th align="left">
+						<a href="__URL__/index/_order/app_utime/_sort/{$sort}">
+							<span class="fl">更新时间</span>
+							<span class="sort <eq name="sort" value="app_utime">{$order}</eq>"></span>
+						</a>
+					</th>
+					<th align="left">
+						<span class="fl">发布账号</span>
+						<span class="sort <eq name="sort" value="app_downloads">{$order}</eq>"></span>
+					</th>
+					<th align="left">
+						<span class="fl">最后修改</span>
+						<span class="sort <eq name="sort" value="app_downloads">{$order}</eq>"></span>
+					</th>
+					<th>
+						<a href="__URL__/index/_order/app_status/_sort/{$sort}">
+							<span class="fl">状态</span>
+							<span class="sort <eq name="sort" value="app_status">{$order}</eq>"></span>
+						</a>
+					</th>
+					<th class="last">操作</th>
+				</tr>
+			</thead>
+
+			<tbody class="grid">
+	<volist name="list" id="vo">
+				<tr ondblclick="window.location = '__APP__/App/edit/id/{$vo.app_id}'">
+					<td><input name="id[]" type="checkbox" value="{$vo.app_id}" class="checkbox"></td>
+					<td>{$vo.app_id}&nbsp;</td>
+					<td>{$vo.app_name}&nbsp;</td>
+					<td><eq name="vo['app_os']" value="1">iOS<else/>Android</eq>&nbsp;</td>
+					<td>{$vo.app_ver_name}&nbsp;</td>
+					<td>{$vo.app_last_ver}&nbsp;</td>
+					<td>{:date('Y-m-d H:i:s', $vo['app_utime'])}&nbsp;</td>
+					<td >{$vo.app_userid|getUserNameById}</td>
+					<td >{$vo.app_mod_userid|getUserNameById}</td>
+					<td><eq name="vo['app_status']" value="1"><img src="../Public/images/correct.gif" alt="Status" title="状态" /></eq></td>
+					<td>
+						<a href="__URL__/edit/id/{$vo.app_id}"><img src="../Public/images/edit-icon.gif" alt="Edit" title="编辑" /></a>
+						<a href="__URL__/exec/act/delete/id/{$vo.app_id}" class="confirm"><img src="../Public/images/hr.gif" alt="Delete" title="删除" /></a>
+						<eq name="vo['app_status']" value="1"><a href="__URL__/exec/act/lock/id/{$vo.app_id}"><img src="../Public/images/lock.gif" alt="Lock" title="下架" /></a></eq>
+						<eq name="vo['app_status']" value="0"><a href="__URL__/exec/act/unlock/id/{$vo.app_id}"><img src="../Public/images/unlock.gif" alt="Unlock" title="上架" /></a></eq>
+						<a href="{$vo.app_url}"><img src="../Public/images/icon_att3476l.gif" alt="Download" title="下载" /></a>
+						<a href="{:NDU('App','all','index',$vo['app_id'])}" target="_blank" class="btn">预览</a>
+					</td>
+				</tr>
+	</volist>
+			</tbody>
+
+			<tfoot>
+				<tr class="last">
+					<td colspan="10">
+						<div class="fl">
+							<select name="act" class="input-small" >
+								<option value="none" selected>批量操作</option>
+								<option value="unlock">上架</option>
+								<option value="lock">下架</option>
+								<option value="delete">删除</option>
+							</select>
+							<input type="submit" value="提交操作" class="btn" id="submitButton" />
+						</div>
+						<div class="select green-black">
+							{$page}
+						</div>
+					</td>
+				</tr>
+			</tfoot>
+
+			</table>
+		</div>
+		</form>
+	</div>
+</div>
+<div class="clear"></div>
+
+<script type="text/javascript" src="../Public/js/ibox.js"></script>
+
+<!-- 主页面结束 -->
+{// 加载尾部公共文件 }
+<include file="../Public/footer" />

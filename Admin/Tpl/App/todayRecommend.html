@@ -1,0 +1,79 @@
+<include file="Public:header" />
+{//:DUMP($vo);}
+<script type="text/javascript" src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+	var is_submit = false;
+	window.onbeforeunload = function(){
+		if(false && !is_submit){
+			return '您输入的数据未保存';
+		}
+	}
+
+	function checkNotNull(){
+		var fields = {
+			'app_id'				: '应用ID',
+			'reason'				: '推荐理由',
+			'date'					: '今日日期'
+		};
+
+		for(key in fields){
+			if($("#"+key).val() == ''){
+				alert(fields[key]+'不能为空');
+				return false;
+			}
+		}
+		is_submit=true;
+		return true;
+	}
+</script>
+
+	<div id="table" >
+		<form onsubmit="return checkNotNull();" action='__URL__/doTodayRM' method="POST" name="f1" id="mainform">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+			<th colspan="2" class="full">编辑每日一游</th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			<tr>
+				<th width="20%">应用ID:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_id" id="app_id" type="text" value="{$vo.app_id}" require="true" datatype="require" placeholder="输入名称" msg="重要！请填写应用名称" />
+					<span id="app_id_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">推荐理由:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="reason" id="reason" type="text" value="{$vo.reason}" require="true" datatype="require" placeholder="输入名称" msg="重要！请填写应用别名" />
+					<span id="reason_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">日期:</td>
+				<td width="80%">
+					<input onclick="WdatePicker({dateFmt:'yyyy-MM-dd'})" class="Wdate" size="30"  name="date" id="date" type="text" value="<empty name='vo.date'>{:date('Y-m-d', $_SERVER['REQUEST_TIME'])}<else />{$vo.date}</empty>" />
+					<span id="date_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn"  name="Submit" value="确定" class="inputButton" />&nbsp;
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+				</td>
+			</tr>
+
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

@@ -1,0 +1,14 @@
+	<div class="topdiv">
+		<div class="topbody">
+			<div class="floatleft topleftdiv">
+<PHP>
+	$homeUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/' . dirname($_SERVER['SCRIPT_NAME']);
+	$homeUrl = rtrim($homeUrl, '/');
+</PHP>
+				<a class="index" href="{$homeUrl}"></a><a class="group" href="{:U('Group/index')}"></a>
+			</div>
+			<div class="floatleft topcenterdiv">
+			</div>
+<include file="Public:nav_user" />
+		</div>
+	</div>

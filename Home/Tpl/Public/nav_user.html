@@ -1,0 +1,10 @@
+			<div class="floatleft toprightdiv">
+				<PHP>if(getUid()) {</PHP><img src="{:getCurrentUserHead()}" class="userheadtop floatleft" onclick="javascript:window.location='{:U('Pic/manage')}'" /><PHP>}</PHP>
+				<label class="floatleft fontcolor4c9ed9 marginleft10">
+					<PHP>if(getUid()) {</PHP><a href="{:U('Pic/manage')}">{:getUname()}</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="{:U('User/logout')}">退出</a><PHP>} else {</PHP>
+					<a class="floatleft paddingleft10" id="showreglogin" onclick="javascript:openForm('dialogreglogin','注册/登录',600,400,'')">注册/登录</a><PHP>}</PHP>
+				</label>
+				<a class="message floatleft marginleft30 usermsg" title="点击打开消息列表" onclick="javascript:openForm('dialogusermsg','消息列表',600,400,'')">
+					<a class="messageCount floatleft" onclick="javascript:openForm('dialogusermsg','消息列表',600,400,'')">{:msgcount()}</a>
+				</a>
+			</div>

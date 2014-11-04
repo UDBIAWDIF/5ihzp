@@ -1,0 +1,61 @@
+<include file="Public:head" />
+</head>
+<body>
+    <div style="margin: 0 auto; width: 1002px; height: 450px;">
+        <div style="width: 600px;" class="floatleft">
+            <img src="{$pic.pic_path|getImgUrlOnSite}" width="600" />
+        </div>
+        <div class="imgshow floatleft">
+            <ul class="paddingtop10">
+                <li class="height50 paddingleft10">
+                    <img src="{$pic.u_icon_id|getUserHeadById}" class="userheadmsg floatleft" />
+                    <div style="margin-left: 10px;" class="floatleft msgname alignleft">
+                        <p class="fontcolor4c9ed9 marginright10 fontsize14" onclick="window.parent.location='{:U('User/piclist', array('uid' => $pic['u_id']))}'">{$pic.u_name}</p>
+                        <p class="fontcolor999 marginright10">{$pic.pic_format_createtime}</p>
+                    </div>
+					<div class="floatright paddingright5">
+						<switch name="pic.u_id|likeStatus">
+							<case value="1"><a class="subadd">已关注</a></case>
+							<case value="2"><a class="subadd">相互关注</a></case>
+							<default /><a class="subadd likeuser" href="{:U('User/like', array('uid' => $pic['u_id']))}">关&nbsp;注</a>
+						</switch>
+					</div>
+                </li>
+                <li class="mark padding10">{$pic.pic_detail}&nbsp;
+                </li>
+                <li class="width100 height40 topborder1">
+                    <div class="floatleft">
+                        <a class="clickheart" href="{:U('User/thumbuppic', array('pic' => $pic['pic_id']))}">
+                            <label class="marginleft20">{$pic.pic_thumbup_count}</label></a>
+                    </div>
+						<div class="floatleft paddingleft10">
+							<PHP>$whoLike = whoLikePic($pic['pic_id']);</PHP>
+							<NOTEMPTY name="whoLike">
+							<label class="fontcolor007acc">
+								<volist name="whoLike" id="who" offset="0" length="3" key="listOrder">
+									<NEQ name="listOrder" value="1">、</NEQ><a href="{:U('User/piclist', array('uid' => $who['u_id']))}" target="_top">{$who.u_name}</a>
+								</volist>
+							</label>，赞了这张照片。
+							<ELSE />
+							还没有人赞这张照片。
+							</NOTEMPTY>
+						</div>
+                </li>
+                <li class="height40 bottomborder1">
+					<form class="commentform" action="{:U('User/commentpic')}" method="POST" picid="{$pic.pic_id}">
+						<div class="alignleft paddingleft10">
+							<input type="hidden" name="pic" value="{$pic.pic_id}" />
+							<input type="text" name="comment" value="" class="msg1" />
+							<input class="submsg" type="submit" value="评 论" />
+						</div>
+					</form>
+                </li>
+            </ul>
+            <ul class="list commentlist alignleft paddingleft10" style="overflow-y: scroll; height: 230px;" picid="{$pic.pic_id}">
+<php>$linkToTop = true;</php>
+<include file="Pic:comment" />
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

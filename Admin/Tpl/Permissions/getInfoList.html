@@ -1,0 +1,16 @@
+<volist name="list" id="vo" >
+
+<switch name="vo.level">
+	<case value="2">
+
+		<li><input type="checkbox" name="popedom[{$vo.pid}][{$vo.id}]" value="{$vo.id}"  onclick="selectAction(this,this.value,'{$vo.viewName}')"> {$vo.viewName}</li>
+
+	</case>	
+	<case value="3">
+
+		<li><input type="checkbox" name="popedom[{$pNode.pid}][{$pNode.id}][]" value="{$vo.id}" checked /> {$vo.viewName}</li>
+
+	</case>	
+</switch>
+
+</volist>

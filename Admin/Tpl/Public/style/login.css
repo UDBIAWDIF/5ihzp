@@ -1,0 +1,24 @@
+@charset "utf-8";
+/* CSS Document */
+
+#container{margin:0px auto; width:1111px; height:600px; background:url(../images/logo/bg.jpg) left bottom no-repeat; padding-top:20px;}
+
+#logo{ margin:0px auto; width:370px; height:106px; background:url(../images/logo/logo.png) no-repeat;}
+
+#shadow{ margin:0px auto; width:518px; height:300px; margin-top:50px; background:url(../images/logo/shadow.png) no-repeat; padding:10px 10px 10px 14px; z-index:1;}
+#login{ z-index:99;}
+.header{ height:35px;}
+.left{ display:block; float: left; background:url(../images/logo/headerleft.gif) no-repeat; height:35px; width:11px;}
+.mid{ display:block; float: left; background:url(../images/logo/headermid.gif) repeat-x; height:35px; width:494px;}
+.right { display:block; float: left; background:url(../images/logo/headerright.gif) repeat-x; height:35px; width:13px;}
+
+.content{ width:518px; height:235px; background:url(../images/logo/content.png); z-index:999; padding-top:25px;}
+
+th{ font-size:16px; font-weight:300;}
+.inputText{ width:163px; height:31px; border:1px solid #aaa; background:url(../images/logo/inputtextbg.jpg) repeat-x; font-size:22px; z-index:9999; position:relative;font-weight:300;}
+.inputText:focus{ border:2px solid #ffdb49;width:161px;}
+.inputText.small:focus{ width:98px;}
+.inputSubmit{ background:url(../images/logo/loginbutton.jpg) no-repeat; width:95px; height:34px; border:none; position:relative; cursor:pointer;}
+.inputSubmit:hover{ background:url(../images/logo/loginbuttonhover.jpg);}
+.inputSubmit:active{ background:url(../images/logo/loginbuttonactive.jpg);}
+.small{ width:100px;}

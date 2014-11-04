@@ -1,0 +1,39 @@
+<include file="Public:header" />
+<!-- 主页面区域 -->
+
+<div id="table">
+	<span class="divleft"></span>
+	<span class="divright"></span>
+	<form action="__URL__/doAdd" method="POST"  id="mainform">
+		<table class="edit"  cellspacing="0">
+			<thead>
+				<tr>
+					<th colspan="2" class="full">增加用户组</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr>
+					<th width="20%">用户组名称</td>
+					<td width="80%"><input name="name" type="text" value="" size="60"/>*</td>
+				</tr>
+
+				<tr>
+					<th>组描述 </td>
+					<td>
+						<input name="remark" type="text" value=""/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<input type="submit" class="btn"  name="Submit" value="确定新增" class="inputButton" />
+						<input type="reset" class="btn" name="Reset" value="还原重填" class="inputButton" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<!-- 主页面结束 -->
+<include file="Public:footer" />

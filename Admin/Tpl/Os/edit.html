@@ -1,0 +1,44 @@
+<include file="Public:header" />
+
+	<div id="table" >
+		<form action="<empty name="vo.os_id">__URL__/doAdd<else />__URL__/doEdit</empty>" method="POST">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"><empty name="vo.os_id">添加<else />编辑</empty>平台</th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			<tr>
+				<th width="20%">平台名称:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="os_name" id="os_name" type="text" value="{$vo.os_name}"/>
+					<span id="os_name_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">平台说明:</td>
+				<td width="80%">
+					<textarea name="os_remark" id="os_remark" cols="80" rows="10">{$vo.os_remark}</textarea>
+					<span id="os_remark_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary"  name="Submit" value="确定<empty name="vo.os_id">添加<else />修改</empty>" class="inputButton" />
+					<input type="button" class="btn" name="add" value="返回" onclick="javascript:history.go(-1)" />
+					<input name="os_id" type="hidden" id="id" value="{$vo.os_id}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

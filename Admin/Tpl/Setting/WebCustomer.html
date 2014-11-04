@@ -1,0 +1,42 @@
+
+<include file="Public:header" />
+
+<div id="container">
+	<div id="header">
+		<div class="title">常规设置</div>
+		<div class="operate">
+		</div>
+	</div>
+	<div id="content">
+	<div id="table" class="small">
+		<form action="__URL__/doAdd" method="POST">
+		<table class="edit"  cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr>
+			  <th width="25%">订单状态</td>
+			  <td ><input name="name" type="text" value="" size="50"/></td>
+			</tr>
+			<tr>
+				<td align="center">
+			   </td>
+				<td align="center">
+			  	<input type="submit" class="btn"  name="Submit" value="修改" class="inputButton" />
+				<input type="button" class="btn" name="add" value="返回" onclick="javascript:history.go(-1)" />
+			   </td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="__PUBLIC__/js/toggle.js"></script>
+
+<include file="Public:footer" />

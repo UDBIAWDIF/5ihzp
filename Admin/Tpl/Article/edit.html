@@ -1,0 +1,276 @@
+<include file="Public:header" />
+<script type="text/javascript" src="../Public/js/datepicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+	var editor;
+	var thisServerUrl = '{$thisServerUrl}';
+	KindEditor.ready(function(K) {
+			editor = K.create('#art_detail', {
+				allowFileManager : false,
+				uploadJson : '{:u("UpAttach/upKeditor")}',
+				filterMode : false,
+				formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+			});
+			//处理封面上传
+			var editorCovert = K.editor({
+				allowFileManager : false,
+				uploadJson : '{:u("Article/upCover")}',
+				formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+			});
+			K('#uploadCoverButton').click(function() {
+				editorCovert.loadPlugin('insertfile', function() {
+					editorCovert.plugin.fileDialog({
+						fileUrl : K('#art_cover_url').val(),
+						clickFn : function(url, title) {
+							K('#art_cover').val(url);
+							K('#art_cover_url').attr('src', realUrl(url));
+							editorCovert.hideDialog();
+						}
+					});
+				});
+			});
+
+			//处理ICON上传
+			K('#uploadIconButton').click(function() {
+				var uploadJson;
+				if($('#art_icon_final').attr("checked")) {
+					uploadJson = '{:u("Article/upIcon","final=1")}';	// 上传已经处理好的ICON图
+				} else {
+					uploadJson = '{:u("Article/upIcon")}';
+				}
+				var editorIcon = K.editor({
+					allowFileManager : false,
+					uploadJson : uploadJson,
+					formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+				});
+
+				editorIcon.loadPlugin('insertfile', function() {
+					editorIcon.plugin.fileDialog({
+						fileUrl : K('#art_icon_url').val(),
+						clickFn : function(url, title) {
+							K('#art_icon').val(url);
+							K('#art_icon_url').attr('src', realUrl(url));
+							editorIcon.hideDialog();
+						}
+					});
+				});
+			});
+
+	});
+
+	//判断是否可能是个标准URL链接
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}//end isUrl
+
+	//如果 url 不是标准的 url ,默认为本站存储的文件
+	function realUrl(url) {
+		url = url.toString();
+
+		if(!isUrl(url)) {
+			url = thisServerUrl + url;
+		}
+		return url;
+	}
+	$(function() {
+		//处理封面、ICON域名  $('#app_cover_url').attr('src', realUrl(url));.
+		var imgCoverUrl = "{$vo.art_cover}";
+		var imgIconUrl = "{$vo.art_icon}";
+		var imgCover = $('#art_cover_url').attr('src', realUrl(imgCoverUrl));
+		var imgIcon = $('#art_icon_url').attr('src', realUrl(imgIconUrl));
+	});
+
+	var is_submit = false;
+	window.onbeforeunload = function(){
+		if(!is_submit){
+			return '您输入的数据未保存';
+		}
+	}
+
+	function _triggerSubmit() {
+		is_submit=true;
+		editor.sync();
+	}
+</script>
+
+	<div id="table" >
+		<form onsubmit="return _triggerSubmit();" action="<empty name='vo.art_id'>__URL__/doAdd<else />__URL__/doEdit</empty>" method="POST" id="mainform" class="noReflesh">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="4" class="full"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+					<tr>
+						<th width="20%">文章分类：</th>
+						<td width="80%" colspan='3'>
+							{:genCgCheckBoxTree($clist,'art',$vo)}
+						</td>
+					</tr>
+					<tr style="display:none;">
+						<th width="20%">平台：</th>
+						<td width="80%" colspan='3'>
+							{:genOsTypeCheck($vo,'art_os_types')}
+						</td>
+					</tr>
+					<tr>
+						<th width="20%">文章标题：</th>
+						<td width="80%" colspan='3'><input name="art_title" type="text" value="{$vo.art_title}" size="100"/>*</td>
+					</tr>
+					<tr>
+						<th width="20%">引用标题：</th>
+						<td width="80%" colspan='3'><input name="art_subtitle" type="text" value="{$vo.art_subtitle}" size="100"/></td>
+					</tr>
+					<tr>
+						<th width="20%">关键字：</th>
+						<td width="80%" colspan='3'><input name="art_keywords" type="text" value="{$vo.art_keywords}" size="100"/></td>
+					</tr>
+					<tr>
+						<th width="20%">文章简介：</th>
+						<td width="80%" colspan='3'>
+						<textarea id="art_description" name="art_description" style="width:620px">{$vo.art_description}</textarea>
+						*
+						</td>
+					</tr>
+					<tr>
+						<th width="20%">文章内容：</th>
+						<td width="80%" colspan='3'>
+						<textarea id="art_detail" name="art_detail" style="width:620px;height:300px;">{$vo.art_detail}</textarea>*
+						</td>
+					</tr>
+					<tr>
+						<th width="20%">文章作者：</th>
+						<td width="30%"><input name="art_author" type="text" value="{$vo.art_author}" size="20"/>*</td>
+						<PHP>if(!$vo['art_pubdate']) $vo['art_pubdate'] = date("Y-m-d");</PHP>
+						<th width="10%" align="right">发布时间：</th>
+						<td width="40%"><input onclick="WdatePicker()" name="art_pubdate" type="text" value="{$vo.art_pubdate}" class="Wdate" readonly="readonly" /></td>
+					</tr>
+					<tr>
+						<th width="20%">是否转链接：</th>
+						<td width="10%">
+						<input name="art_is_external" type="radio" value="1" <eq name="vo.art_is_external" value="1">checked</eq>/>是
+						<input name="art_is_external" type="radio" value="0" <eq name="vo.art_is_external" value="0">checked</eq>/>否
+						</td>
+						<th width="15%" align="right">转链接地址：</th>
+						<td width="55%"><input name="art_external_url" type="text" value="{$vo.art_external_url}" size="50"/></td>
+					</tr>
+					<tr>
+						<th width="20%">下载关联应用ID：</th>
+						<td width="80%" colspan='3'><input name="art_app_id" type="text" value="{$vo.art_app_id}" size="20"/>
+							<input type="button" id="getAppIcon" class="btn"value="获取应用图片" />
+						</td>
+					</tr>
+					<tr>
+						<th width="20%">文章封面：</th>
+						<td width="80%" colspan='3'>
+							<img name="art_cover_url" id="art_cover_url" src="{$vo.art_cover_url}" class="imgLimitimg" />
+							&nbsp;&nbsp;<a href="#" id="uploadCoverButton" class="btn" value="上传封面">上传封面</a>
+							<input name="art_cover" id="art_cover" type="hidden" value="{$vo.art_cover}" />
+							<span id="art_cover_message"></span>
+						</td>
+					</tr>
+					<tr>
+						<th width="20%">文章icon：</th>
+						<td width="80%" colspan='3'>
+							<img name="art_icon_url" id="art_icon_url" src="{$vo.art_icon_url}" class="imgLimitimg" />
+							&nbsp;&nbsp;<a href="#" id="uploadIconButton" class="btn" value="上传ICON">上传ICON</a>
+							<label><input type="checkbox" value="1" id="art_icon_final" />图片已经处理好</label>
+							<input name="art_icon" id="art_icon" type="hidden" value="{$vo.art_icon}" />
+							<span id="art_icon_message"></span>
+						</td>
+					</tr>
+					<tr>
+						<th width="20%">评分：</th>
+						<td width="30%">
+						<PHP>if(!$vo['art_grade']) $vo['art_grade'] = 6;</PHP>
+						<input name="art_grade" type="text" value="{$vo.art_grade}" size="20"/>*
+						</td>
+						<td width="10%" align="right">推荐星级：</td>
+						<td width="40%">
+						<PHP>if(!$vo['art_star_level']) $vo['art_star_level'] = 3;</PHP>
+						<select name="art_star_level" >
+							<option value="5" <eq name="vo.art_star_level" value="5">selected</eq>>5星</option>
+							<option value="4" <eq name="vo.art_star_level" value="4">selected</eq>>4星</option>
+							<option value="3" <eq name="vo.art_star_level" value="3">selected</eq>>3星</option>
+							<option value="2" <eq name="vo.art_star_level" value="2">selected</eq>>2星</option>
+							<option value="1" <eq name="vo.art_star_level" value="1">selected</eq>>1星</option>
+						</select>
+						</td>
+					</tr>
+					<tr>
+						<th>顶一下：</th>
+						<td colspan="3"><input name="art_thumb_up" type="text" value="{$vo.art_thumb_up}" size="20"/></td>
+					</tr>
+					<tr>
+
+					</tr>
+					<tr>
+						<th width="20%">预留1：</th>
+						<td width="30%"><input name="art_custom1" type="text" value="{$vo.art_custom1}" size="20"/></td>
+						<th width="10%" align="right">预留2：</th>
+						<td width="40%"><input name="art_custom2" type="text" value="{$vo.art_custom2}" size="20"/></td>
+					</tr>
+					<tr>
+						<th width="20%">预留3：</th>
+						<td width="30%"><input name="art_custom3" type="text" value="{$vo.art_custom3}" size="20"/></td>
+						<th width="10%" align="right">预留4：</th>
+						<td width="40%"><input name="art_custom4" type="text" value="{$vo.art_custom4}" size="20"/></td>
+					</tr>
+					<tr>
+						<th>保存为草稿:</td>
+						<td colspan="3">
+							<label><input type="checkbox" value="0" name="art_status" <empty name="vo.art_status">checked</empty>/>保存为草稿</label>
+						</td>
+					</tr>
+
+			<tr>
+				<td colspan="4" align="center">
+					<input type="submit" class="btn btn-primary"  name="Submit" value="确定<empty name='vo.art_id'>添加<else />修改</empty>" class="inputButton" />
+					<input type="button" class="btn btnClose" name="add" value="返回" onclick="javascript:history.go(-1)" />
+					<input name="art_id" type="hidden" id="art_id" value="{$vo.art_id}" />
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#getAppIcon').click(function(){
+		var art_app_id = $('input[name="art_app_id"]').val();
+		if(art_app_id){
+			$.ajax({
+				type: 'POST',
+				url: "{:U('Article/getAppIcon')}",
+				data : 'app_id='+art_app_id,
+				dataType: "json",
+				beforeSend:loading,
+				success: function(msg){
+					tips.close();
+					if(msg.status){
+						$('#art_cover').val(msg.info.app_cover);
+						$('#art_cover_url').attr('src', realUrl(msg.info.app_cover));
+						$('#art_icon').val(msg.info.app_icon);
+						$('#art_icon_url').attr('src', realUrl(msg.info.app_icon));
+					}
+				}
+			});
+		}else{
+			error('请输入应用ID');
+		}
+	});
+});
+</script>
+<include file="Public:footer" />

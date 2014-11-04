@@ -1,0 +1,859 @@
+<include file="Public:header" />
+
+<script type="text/javascript" src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<link rel="stylesheet" href="../Public/js/colorbox/colorbox.css" />
+<script charset="utf-8" src="../Public/js/colorbox/jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+	var app_os = '{$vo.app_os}';
+	app_os = parseInt(app_os);
+	var imgUrlPrefix = '{$imgUrlPrefix}';
+	var thisSoftServerUrl = '{$thisSoftServerUrl}';
+	var thisImgServerUrl = '{$thisImgServerUrl}';
+	var separator = '{$Think.config.img_link_separator}';
+	var editor;
+	KindEditor.ready(function(K) {
+		editor = K.create('#app_detail', {
+			allowFileManager : false,
+			uploadJson : "{:u('UpAttach/upKeditor', array(C('VAR_SESSION_ID') => $_COOKIE['PHPSESSID']))}",
+			formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+		});
+
+		//处理封面上传
+		var editorCovert = K.editor({
+			allowFileManager : false,
+			uploadJson : '{:u("App/upCover")}',
+			formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+		});
+		K('#uploadCoverButton').click(function() {
+			editorCovert.loadPlugin('insertfile', function() {
+				editorCovert.plugin.fileDialog({
+					fileUrl : K('#app_cover_url').val(),
+					clickFn : function(url, title) {
+						K('#app_cover').val(url);
+						K('#app_cover_url').attr('src', realUrl(url));
+						editorCovert.hideDialog();
+					}
+				});
+			});
+		});
+
+		//处理ICON上传
+		/* var editorIcon = K.editor({
+			allowFileManager : false,
+			uploadJson : '{:u("App/upIcon")}',
+			formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+		}); */
+		K('#uploadIconButton').click(function() {
+			var uploadJson;
+			if($('#app_icon_final').attr("checked")) {
+				uploadJson = '{:u("App/upIcon","final=1")}';	// 上传已经处理好的ICON图
+			} else {
+				uploadJson = '{:u("App/upIcon")}';
+			}
+
+			var editorIcon = K.editor({
+				allowFileManager : false,
+				uploadJson : uploadJson,
+				formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+			});
+
+			editorIcon.loadPlugin('insertfile', function() {
+				editorIcon.plugin.fileDialog({
+					fileUrl : K('#app_icon_url').val(),
+					clickFn : function(url, title) {
+						K('#app_icon').val(url);
+						K('#app_icon_url').attr('src', realUrl(url));
+						editorIcon.hideDialog();
+					}
+				});
+			});
+		});
+
+		//处理软件上传
+		var editorSoft = K.editor({
+			allowFileManager : false,
+			uploadJson : '{:u("App/upSoft")}',
+			formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+		});
+		K('#uploadSoftButton').click(function() {
+			editorSoft.loadPlugin('insertfile', function() {
+				editorSoft.plugin.fileDialog({
+					fileUrl : K('#app_url').val(),
+					clickFn : function(url, title) {
+						K('#app_store').val(url);
+						//K('#app_url').val(realUrl(url, 'soft'));
+						editorSoft.hideDialog();
+						triggerAppAnalyze();	//解析软件包
+					}
+				});
+			});
+		});
+
+		//处理截图上传
+		var editorScreenshot = K.editor({
+			allowFileManager : false,
+			uploadJson : '{:u("App/upScreenshot")}',
+			formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+		});
+		K('#uploadScreenshotButton').click(function() {
+			editorScreenshot.loadPlugin('insertfile', function() {
+				editorScreenshot.plugin.fileDialog({
+					fileUrl : K('#app_screenshot_url').val(),
+					clickFn : function(url, title) {
+						// K('#app_screenshot').val(url);
+						appendScreenshot(url);
+/* 						appendScreenshot = createScreenshotImg(url);
+						$('#app_screenshot_url').append(appendScreenshot); */
+						linkScreenshotUrl();
+						// editorScreenshot.hideDialog();
+					}
+				});
+			});
+		});
+
+	});
+
+	// 向截图区添加截图  todo 判断之前是否有过此图,有的才APPEND
+	function appendScreenshot(img_url) {
+		img_area = createScreenshotImg(img_url);
+		$('#app_screenshot_url').append(img_area);
+	}//end appendScreenshot()
+
+	// 获取截图区所有图片(下的INPUT)的图片路径(相对于网站根目录),连接后存入要提交的表单
+	function linkScreenshotUrl() {
+		var app_screenshot = '';
+		$('#app_screenshot_url input').each(function(i) {
+			app_screenshot += this.value + separator;
+		});
+		if(app_screenshot.length) {
+			app_screenshot = delRightSeparator(app_screenshot);
+		}
+		$('input[name="app_screenshot"]').val(app_screenshot);
+		return;
+	}//end linkScreenshotUrl()
+
+	//等待窗口
+	function waitbox(showtext, close) {
+		if(close) {
+			$.colorbox.close();
+		} else {
+			if(!showtext) {showtext = '正在生成数据......';}
+			$.colorbox({
+				href : "../Public/images/load.gif",
+				title : showtext,
+				overlayClose : false
+			});
+		}
+	}//end waitbox()
+
+	// 解析软件包
+	function triggerAppAnalyze() {
+		var app_store = $('#app_store').val();
+		var analyze_url = "__URL__/appAnalyze";
+		$.post(analyze_url,
+			{
+				app:app_store,
+			},
+			function(data) {
+				data = eval('(' + data + ')');
+				if(!data.error){
+					app_info = data.data;
+					$('input[name="app_size"]').val(toKB(app_info.size));
+					if(app_info.sys_type == 'apk') {
+						//$('input[name="app_package"]').val(app_info.package);
+					}
+					if(app_info.sys_type == 'ipa') {
+						//$('input[name="app_itunes_id"]').val(app_info.itunes_id);
+					}
+					//$('input[name="app_name"]').val(app_info.name);
+					$('input[name="app_package"]').val(app_info.package);
+					$('input[name="app_ver_code"]').val(app_info.ver_code);
+					$('input[name="app_format"]').val(app_info.sys_type);
+					$('input[name="app_ver_name"]').val(app_info.ver_name);
+					if(app_info.ios_type) {
+						$('#app_ios_type').val(app_info.ios_type);
+					}
+
+					//选上相应固件
+					var fwList = $('#app_fw_id');
+					var fw_level = fwList.find('option[fw_order='+app_info.min_os_ver+']').val();
+					if(fw_level) {
+						fwList.val(fw_level);
+					}
+				}else{
+					alert(data.message);
+				}
+			}
+		);
+	}//end triggerAppAnalyze()
+
+	//清除尾部连接符
+	function delRightSeparator(str) {
+		if(str.length) {
+			if(separator == str.substr(str.length - separator.length)) {
+				str = str.substr(0, str.length - separator.length);
+			}
+		}
+		return str;
+	}//end delRightSeparator()
+
+	//生成截图的显示,并在相应截图后储存图片路径(相对于网站根目录,在INPUT里)
+	function createScreenshotImg(url) {
+		//return '<span><img class="imgLimitimg" src="' + realUrl(url) + '"/><input type="hidden" value="' + url + '" /><a href="#" class="btn delImg"><font color="#FF0000">X</font></a></span>';
+		return '<span><img class="imgLimitimg" src="' + realUrl(url) + '"/><input type="hidden" value="' + url + '" /><span class="btn delImg"><font color="#FF0000">X</font></span></span>';
+	}//end createScreenshotImg()
+
+	$(function() {
+		//判断是否可以提交数据
+		$("#f1").submit(function() {
+			var app_package_loading = !$('#app_package_loading').is(":visible");
+			var app_itunes_id_loading = !$('#app_itunes_id_loading').is(":visible");
+			if(app_package_loading && app_itunes_id_loading) {
+				return true;
+			} else {
+				alert('有数据正在处理，请处理完毕后再提交');
+				return false;
+			}
+		});
+
+		//获取平台相应固件列表
+		// $('input[name="app_os"]').click(function() {
+		$('input[name="app_os"]').change(function() {
+			var osid = $(this).val();
+			if(!osid) {
+				osid=0;
+			}
+			var fwList = $('#app_fw_id');
+			fwList.html('');
+			var url = "{:u('Os/getFwByOs')}";
+			$.get(url + "/id/" + osid, function(data) {
+				var x;
+				data = eval('(' + data + ')');
+				if(data.row){
+					var fw_higher_str = '及更高版本';
+					for (x in data.row){
+						fwList.append('<option value='+data.row[x].fw_id+' fw_order='+data.row[x].fw_order+'>'+data.row[x].fw_name+fw_higher_str+'</option>');
+					}
+				}else{
+					fwList.html('<option value=0>没有相关固件</option>');
+				}
+				fwList.val({$vo['app_fw_id']});
+			});
+		});
+		if(app_os) {
+			$("input[type=radio][name='app_os'][value=" + app_os + "]").trigger("change");
+		} else {
+			var ios_id = '{$ios_id}';
+			// $("input[type=radio][name='app_os'][value=" + ios_id + "]").trigger("change");
+			$("input[type=radio][name='app_os']").trigger("change");
+		}
+
+		//处理封面、ICON域名  $('#app_cover_url').attr('src', realUrl(url));.
+		var imgCoverUrl = "{$vo.app_cover}";
+		var imgIconUrl = "{$vo.app_icon}";
+		var imgCover = $('#app_cover_url').attr('src', realUrl(imgCoverUrl));
+		var imgIcon = $('#app_icon_url').attr('src', realUrl(imgIconUrl));
+
+		//组装软件截图
+		var app_screenshot = '';
+		var imgLinks = $('input[name="app_screenshot"]').val();
+		if(imgLinks.length) {
+			imgLinks = delRightSeparator(imgLinks);
+			imgLinks = imgLinks.split(separator);
+			for(i=0; i<imgLinks.length; i++) {
+				app_screenshot += createScreenshotImg(imgLinks[i]);
+			}
+		}
+		$('span[name="app_screenshot_url"]').append(app_screenshot);
+
+		//删除图片
+		$('.delImg').live('click', function() {
+			$(this).parent().remove();
+			linkScreenshotUrl();
+		});
+
+		//通过iTunes id获取相关信息	http://itunes.apple.com/lookup?id=473933362
+		$('.getItunesId').click(function() {
+			//waitbox();
+			var this_loading = $('#app_itunes_id_loading');
+			this_loading.show();
+			var it_id = $('input[name="app_itunes_id"]').val();
+
+			var app_size = $('input[name="app_size"]');
+			var app_ver_name = $('input[name="app_ver_name"]');
+			var app_developer = $('input[name="app_developer"]');
+			var app_keywords = $('input[name="app_keywords"]');
+			var app_homepage = $('input[name="app_homepage"]');
+			var app_email = $('input[name="app_email"]');
+			var app_description = $('textarea[name="app_description"]');
+
+			var iTunes_url = "__URL__/getAppinfoByItunesId";
+			$.get(iTunes_url + "/id/" + it_id, function(data) {
+				//waitbox('', true);
+				this_loading.hide();
+				data = eval('(' + data + ')');
+				if(data.resultCount) {
+					//file_size = data.results[0].fileSizeBytes / 1024;
+					//app_size.val(file_size.toFixed(2));
+					//app_ver_name.val(data.results[0].version);
+
+					app_developer.val(data.results[0].artistName);
+					//app_keywords.val(data.results[0].bundleId);
+					app_homepage.val(data.results[0].sellerUrl);
+					//app_email.val(data.results[0].version);
+					//app_description.html(data.results[0].description);
+					writeAppDetail(editor, data.results[0].description);
+
+					// 采集到的截图合并到截图区
+					if(!data.results.screenshot91.error) {
+						$.each(data.results.screenshot91.url, function(i, url) {
+							appendScreenshot(url);
+						});
+						linkScreenshotUrl();
+					}
+
+					if(!data.results.icon91.error) {
+						$('#app_icon').val(data.results.icon91.url[0]);
+						$('#app_icon_url').attr('src', realUrl(data.results.icon91.url[0]));
+					}
+
+				} else {
+					//alert('获取不到数据,请检查输入的标识符！');
+					alert(data.message);
+				}
+			});
+			//triggerAppAnalyze();
+		});
+
+		//通过安卓包名获取相关信息	https://play.google.com/store/apps/details?id=com.glu.carszombies
+		$('.getApkPackage').click(function() {
+			//waitbox();
+			var this_loading = $('#app_package_loading');
+			this_loading.show();
+			var app_package = $('input[name="app_package"]').val();
+
+			var app_size = $('input[name="app_size"]');
+			var app_ver_name = $('input[name="app_ver_name"]');
+			var app_developer = $('input[name="app_developer"]');
+			var app_keywords = $('input[name="app_keywords"]');
+			var app_homepage = $('input[name="app_homepage"]');
+			var app_email = $('input[name="app_email"]');
+			var app_description = $('textarea[name="app_description"]');
+
+			var iTunes_url = "__URL__/getAppinfoFromGooplay";
+			$.get(iTunes_url + "/package/" + app_package, function(data) {
+				//waitbox('', true);
+				this_loading.hide();
+				data = eval('(' + data + ')');
+				if(data.resultCount) {
+					//file_size = data.results[0].fileSizeBytes / 1024;
+					//app_size.val(file_size.toFixed(2));
+					//app_ver_name.val(data.results[0].version);
+
+					app_developer.val(data.results.developer);
+					//app_keywords.val(data.results[0].bundleId);
+					app_homepage.val(data.results.homepage);
+					app_email.val(data.results.email);
+					//app_description.html(data.results.description);
+					writeAppDetail(editor, data.results.description);
+
+					// 采集到的截图合并到截图区
+					if(!data.results.screenshot91.error) {
+						$.each(data.results.screenshot91.url, function(i, url) {
+							appendScreenshot(url);
+						});
+						linkScreenshotUrl();
+					}
+
+					if(!data.results.icon91.error) {
+						$('#app_icon').val(data.results.icon91.url);
+						$('#app_icon_url').attr('src', realUrl(data.results.icon91.url));
+					}
+
+				} else {
+					//alert('获取不到数据,请检查输入的标识符！');
+					alert(data.message);
+				}
+			});
+			//triggerAppAnalyze();
+		});
+
+		// 导入数据
+		$("#importAppInfo").click(function() {
+			triggerAppAnalyze();
+		});
+
+	});
+
+	//在keditor不为空时写入详细描述
+	function writeAppDetail(ke, content) {
+		if(ke.isEmpty()) {
+			ke.text(content);
+		}
+	}//end writeAppDetail()
+
+	//判断是否可能是个标准URL链接
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}//end isUrl
+
+	function toKB(num) {
+		num = num / 1024;
+		return num.toFixed(2);
+	}//end toKB()
+
+	//如果 url 不是标准的 url ,就加上域名
+	function realUrl(url) {
+		var type = arguments[1] ? arguments[1] : 'img';
+		url = url.toString();
+		if(!isUrl(url)) {
+			switch (type) {
+				case 'soft' :
+					url = thisSoftServerUrl + url;
+					break;
+				case 'img' :
+					url = thisImgServerUrl + url;
+					break;
+			}
+		}
+		return url;
+	}//end realUrl()
+
+	var is_submit = false;
+	window.onbeforeunload = function(){
+		if(!is_submit){
+			return '您输入的数据未保存';
+		}
+	}
+
+	function checkNotNull(){
+		editor.sync();
+		var fields = {
+			'app_name'				: '应用名称',
+			'app_alias_name'		: '应用别名',
+			'app_size'				: '软件大小',
+			'app_format'			: '软件格式',
+			'app_ver_code'			: '软件版本',
+			'app_ver_name'			: '版本名称',
+			'app_package'			: '软件标识符',
+			'app_cover'				: '封面',
+			'app_icon'				: 'ICON',
+			'app_screenshot'		: '截图',
+			'app_grade'				: '评分',
+			'app_description'		: '短简介',
+			'app_detail'			: '详细描述',
+			'app_editor_comment'	: '小编点评'
+		};
+
+		for(key in fields){
+			if($("#"+key).val() == ''){
+				alert(fields[key]+'不能为空');
+				return false;
+			}
+		}
+		is_submit=true;
+		return true;
+	}
+
+	function getFileSize(){
+		var a = [];
+		a.push({name:'app_url',value:$("#app_url").val()});
+		$.post("__URL__/getFileSize", a, function(data){
+			$("#app_size").val(data);
+		});
+	}
+</script>
+
+	<div id="table" >
+		<form onsubmit="return checkNotNull();" action='<empty name="vo.app_id">__URL__/doAdd<else />__URL__/doEdit</empty>' method="POST" name="f1" id="mainform" <notempty name="vo.app_id">class="noReflesh"</notempty>>
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			<!-- tr class="form-inline">
+				<th width="20%">平台:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<label><input type="radio" name="app_os" value="1" <eq name="vo['app_os']" value="1">checked</eq> <notempty name="vo['app_os']">disabled</notempty>/>iOS苹果 </label>
+					<label><input type="radio" name="app_os" value="2" <eq name="vo['app_os']" value="2">checked</eq> <notempty name="vo['app_os']">disabled</notempty>/>Android安卓 </label>
+					<label><input type="radio" name="app_os" value="2" checked <notempty name="vo['app_os']">disabled</notempty>/>Android安卓 </label>
+					<span id="app_os_message"></span>
+				</td>
+			</tr -->
+
+			<tr class="form-inline" style="display:none;">
+				<th width="20%">平台:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<label><input type="radio" name="app_os" value="2" checked>Android安卓</label>
+					<span id="app_os_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">应用名称:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_name" id="app_name" type="text" value="{$vo.app_name}" require="true" datatype="require" placeholder="输入名称" msg="重要！请填写应用名称" />
+					<span id="app_name_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">应用别名:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_alias_name" id="app_alias_name" type="text" value="{$vo.app_alias_name}" require="true" datatype="require" placeholder="输入名称" msg="重要！请填写应用别名" />
+					<span id="app_alias_name_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">应用路径:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					网络链接: <input name="app_url" id="app_url" type="text" size="50" value="{$vo.app_url}" />
+					<a class="btn" href="javascript:void(0)" onclick="getFileSize()">取得软件大小</a>
+					<br />
+					本地路径: <input name="app_store" id="app_store" type="text" size="50" value="{$vo.app_store}" />
+					<br /><br />
+					<font color="#FF0000">注意: 如果“网络链接” 不为空,将以“网络链接”为准！</font>
+					<br /><br />
+					&nbsp;<a href="#" id="uploadSoftButton" class="btn" value="上传软件">上传软件</a>
+					&nbsp;<!-- a href="#" class="btn">FTP路径</a -->
+					&nbsp;&nbsp;<a href="#" id="importAppInfo" class="btn">导入数据</a>
+					<span id="app_url_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">软件大小:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_size" id="app_size" value="{$vo.app_size}" require="true" datatype="require" placeholder="输入大小" msg="重要！请填写应用大小" />KB&nbsp;
+					<span id="app_size_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">软件格式:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_format" id="app_format" value="<EMPTY name='vo.app_format'>apk<ELSE />{$vo.app_format}</EMPTY>" require="true" datatype="require" placeholder="输入格式" msg="重要！请填写应用格式" />&nbsp;
+					<span id="app_format_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">软件版本:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_ver_code" id="app_ver_code" value="{$vo.app_ver_code}" require="true" datatype="require" placeholder="输入版本" msg="重要！请填写应用版本" />&nbsp;
+					<span id="app_ver_code_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">版本名称:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_ver_name" id="app_ver_name" value="{$vo.app_ver_name}" require="true" datatype="require" placeholder="输入版本名称" msg="重要！请填写应用版本名称" />&nbsp;
+					<span id="app_ver_name_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">适用固件:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<select name="app_fw_id" id="app_fw_id">
+						<option value=''>未选择</option>
+					</select>
+					<span id="app_fw_id_message"></span>
+					<!--
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;适用机型:
+					<span name="app_ios_type_div">
+						<select name="app_ios_type" id="app_ios_type">
+							<option value='3' <eq name="vo.app_ios_type" value="3">selected</eq>>通用</option>
+							<option value='1' <eq name="vo.app_ios_type" value="1">selected</eq>>iPhone</option>
+							<option value='2' <eq name="vo.app_ios_type" value="2">selected</eq>>iPad</option>
+						</select>
+						<span id="app_ios_type_message"></span>
+					</span>
+					-->
+				</td>
+			</tr>
+
+			<tr name="app_package_tr">
+				<th width="20%">软件标识符:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_package" id="app_package" value="{$vo.app_package}" require="true" datatype="require" placeholder="输入标识符" msg="重要！请填写应用标识符" />&nbsp;
+					<span id="app_package_message"></span>
+					<a href="#" class="btn getApkPackage">通过标识符获取相关信息</a><font color="#FF0000">安卓独有</font><span id="app_package_loading" style="display: none;"><img src="../Public/js/colorbox/images/loading.gif" />正在生成数据。。。</span>
+				</td>
+			</tr>
+			<!--
+			<tr name="app_itunes_id_tr">
+				<th width="20%">iTunes ID:</td>
+				<td width="80%">
+					<input name="app_itunes_id" id="app_itunes_id" value="{$vo.app_itunes_id}" />&nbsp;
+					<span id="app_itunes_id_message"></span>
+					<a href="#" class="btn getItunesId">通过iTunes id获取相关信息</a><font color="#FF0000">苹果独有</font><span id="app_itunes_id_loading" style="display: none;"><img src="../Public/js/colorbox/images/loading.gif" />正在生成数据。。。</span>
+				</td>
+			</tr>
+-->
+			<tr>
+				<th width="20%">软件类别:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<select name="app_cg_id" id="app_cg_id">
+						<volist name="cgList" id="cg">
+							<option value="{$cg.app_cg_id}" <eq name="vo.app_cg_id" value="$cg['app_cg_id']">selected</eq>>{$cg.app_cg_name}</option>
+						</volist>
+					</select>
+					<span id="app_cg_id_message"></span>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;中文游戏类别:
+					&nbsp;&nbsp;<input type="radio" name="app_chinese_type" id="app_chinese_type" value="0" <eq name="vo.app_chinese_type" value="0">checked</eq> />不限
+					&nbsp;&nbsp;<input type="radio" name="app_chinese_type" id="app_chinese_type" value="1" <eq name="vo.app_chinese_type" value="1">checked</eq> />官方中文
+					&nbsp;&nbsp;<input type="radio" name="app_chinese_type" id="app_chinese_type" value="2" <eq name="vo.app_chinese_type" value="2">checked</eq> />汉化
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">开发商:</td>
+				<td width="80%">
+					<input name="app_developer" id="app_developer" type="text" size="70" value="{$vo.app_developer}" />
+					<span id="app_developer_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">关键字:</td>
+				<td width="80%">
+					<input name="app_keywords" id="app_keywords" type="text" size="70" value="{$vo.app_keywords}" />
+					<span id="app_keywords_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">软件主页:</td>
+				<td width="80%">
+					<input name="app_homepage" id="app_homepage" type="text" size="70" value="{$vo.app_homepage}" />
+					<span id="app_homepage_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">客服Email:</td>
+				<td width="80%">
+					<input name="app_email" id="app_email" type="text" size="70" value="{$vo.app_email}" />
+					<span id="app_email_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">封面<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<img name="app_cover_url" id="app_cover_url" src="{$vo.app_cover_url}" class="imgLimitimg" />
+					&nbsp;&nbsp;<a href="#" id="uploadCoverButton" class="btn" value="上传封面">上传封面</a>
+					<input name="app_cover" id="app_cover" type="hidden" value="{$vo.app_cover}" require="true" datatype="require" placeholder="上传封面" msg="重要！请上传封面" />
+					<span id="app_cover_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">ICON<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<img name="app_icon_url" id="app_icon_url" src="{$vo.app_icon_url}" class="imgLimitimg" />
+					&nbsp;&nbsp;<a href="#" id="uploadIconButton" class="btn" value="上传ICON">上传ICON</a>
+					<input name="app_icon" id="app_icon" type="hidden" value="{$vo.app_icon}" require="true" datatype="require" placeholder="上传ICON" msg="重要！请上传ICON" />
+					<input name="app_icon_final" id="app_icon_final" type="checkbox" value="1" />图片已经处理好</input>
+					<span id="app_icon_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">截图<font color="#FF0000">*</font><a name="a_screenshot"></a></td>
+				<td width="80%">
+
+					<span name="app_screenshot_url" id="app_screenshot_url"></span>
+
+					&nbsp;&nbsp;<a href="#" id="uploadScreenshotButton" class="btn" value="上传截图">上传截图</a>
+					<input name="app_screenshot" id="app_screenshot" type="hidden" value="{$vo.app_screenshot}" require="true" datatype="require" placeholder="上传截图" msg="重要！请上传截图" />
+					<span id="app_screenshot_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">短简介:<font color="#FF0000">*</font></td>
+				<td width="80%" colspan="2">
+					<textarea name="app_description" id="app_description" cols="80" rows="4" style="width: 600px;" require="true" datatype="require" placeholder="输入短简介" msg="重要！请填写短简介" />{$vo.app_description}</textarea>
+					<span id="app_description_message"></span>
+				</td>
+			</tr>
+<!-- todo KindEditor  -->
+			<tr>
+				<th width="20%">详细描述:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<textarea name="app_detail" id="app_detail" cols="80" rows="25" style="width: 600px;" require="true" datatype="require" placeholder="输入详细描述" msg="重要！请填写详细描述" />{$vo.app_detail}</textarea>
+					<span id="app_detail_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">小编点评:</td>
+				<td width="80%">
+					<textarea name="app_editor_comment" id="app_editor_comment" cols="80" rows="4" style="width: 600px;" require="true" datatype="require" placeholder="输入小编点评" msg="重要！请填写小编点评" />{$vo.app_editor_comment}</textarea>
+					<span id="app_editor_comment_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">视频地址:</td>
+				<td width="80%">
+					<input name="app_video_url" id="app_video_url" type="text" size="70" value="{$vo.app_video_url}" />
+					<span id="app_video_url_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">评测攻略:</td>
+				<td width="80%">
+					<input name="app_evaluate_url" id="app_evaluate_url" type="text" size="70" value="{$vo.app_evaluate_url}" />
+					<span id="app_evaluate_url_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">网盘地址:</td>
+				<td width="80%">
+					<input name="app_network_disk" id="app_network_disk" type="text" size="70" value="{$vo.app_network_disk}" />
+					<span id="app_network_disk_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">&nbsp;</td>
+				<td width="85%" cols="2">
+					<input name="app_is_recommend" id="app_is_recommend" type="checkbox" value="1" <notempty name="vo.app_is_recommend">checked</notempty> />是否推荐
+					<span id="app_is_recommend_message"></span>
+					&nbsp;&nbsp;&nbsp;
+
+					<input name="app_is_top" id="app_is_top" type="checkbox" value="1" <notempty name="vo.app_is_top">checked</notempty> />是否置顶
+					<span id="app_is_top_message"></span>
+					&nbsp;&nbsp;&nbsp;
+
+					<input name="app_is_authorize" id="app_is_authorize" type="checkbox" value="1" <notempty name="vo.app_is_authorize">checked</notempty> />是否授权
+					<span id="app_is_authorize_message"></span>
+				</td>
+			</tr>
+			<tr class="form-inline">
+				<th width="20%">是否网游:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<label><input type="radio" name="app_is_network" value="1" <eq name="vo['app_is_network']" value="1">checked</eq>/>是 </label>
+					<label><input type="radio" name="app_is_network" value="0" <eq name="vo['app_is_network']" value="0">checked</eq>/>否 </label>
+					<span id="app_is_network_message"></span>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">评分:<font color="#FF0000">*</font></td>
+				<td width="80%">
+					<input name="app_grade" id="app_grade" type="text" value="{$vo.app_grade}" require="true" datatype="require" placeholder="输入评分" msg="重要！请填写评分" />
+					<span id="app_grade_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">推荐星级:</td>
+				<td width="80%">
+					<PHP>if(!$vo['app_star_level']) $vo['app_star_level'] = 3;</PHP>
+					<select name="app_star_level" id="app_star_level">
+						<option value='1' <eq name="vo.app_star_level" value="1">selected</eq>>1</option>
+						<option value='2' <eq name="vo.app_star_level" value="2">selected</eq>>2</option>
+						<option value='3' <eq name="vo.app_star_level" value="3">selected</eq>>3</option>
+						<option value='4' <eq name="vo.app_star_level" value="4">selected</eq>>4</option>
+						<option value='5' <eq name="vo.app_star_level" value="5">selected</eq>>5</option>
+					</select>
+					<span id="app_star_level_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">排序日期:</td>
+				<td width="80%">
+					<input onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="Wdate" size="30"  name="app_order" id="app_order" type="text" value="<empty name='vo.app_order'><else />{:date('Y-m-d H:i:s', $vo['app_order'])}</empty>" />
+					<span id="app_order_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">排序日期(精选):</td>
+				<td width="80%">
+					<input onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="Wdate" size="30"  name="app_order_recommend" id="app_order_recommend" type="text" value="<empty name='vo.app_order_recommend'><else />{:date('Y-m-d H:i:s', $vo['app_order_recommend'])}</empty>" />
+					<span id="app_order_recommend_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">浏览数:</td>
+				<td width="80%">
+					<input name="app_pageview" id="app_pageview" type="text" value="<empty name='vo.app_pageview'>0<else />{$vo.app_pageview}</empty>" />
+					<span id="app_pageview_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">日下载:</td>
+				<td width="80%">
+					<input name="app_day_downloads" id="app_day_downloads" type="text" value="<empty name='vo.app_day_downloads'>0<else />{$vo.app_day_downloads}</empty>" />
+					<span id="app_day_downloads_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">周下载:</td>
+				<td width="80%">
+					<input name="app_week_downloads" id="app_week_downloads" type="text" value="<empty name='vo.app_week_downloads'>0<else />{$vo.app_week_downloads}</empty>" />
+					<span id="app_week_downloads_message"></span>
+				</td>
+			</tr>
+
+			<tr>
+				<th width="20%">总下载:</td>
+				<td width="80%">
+					<input name="app_downloads" id="app_downloads" type="text" value="<empty name='vo.app_downloads'>0<else />{$vo.app_downloads}</empty>" />
+					<span id="app_downloads_message"></span>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">顶一下:</td>
+				<td width="80%">
+					<input name="app_thumb_up" id="app_thumb_up" type="text" value="{$vo.app_thumb_up}" />
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">保存为草稿:</td>
+				<td width="80%">
+					<label><input type="checkbox" value="0" name="app_status" <empty name="vo.app_status">checked</empty>/>保存为草稿</label>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary" name="Submit" value="确定<empty name="vo.app_id">添加<else />修改</empty>" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input type="hidden" name="app_os" value="2" />
+					<input name="app_id" type="hidden" id="app_id" value="{$vo.app_id}" />
+					<input name="return_url" type="hidden" id="return_url" value="{$_SERVER['HTTP_REFERER']}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

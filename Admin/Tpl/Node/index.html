@@ -1,0 +1,330 @@
+<include file="Public:header" />
+<!-- 菜单区域  -->
+<style>
+ul.tree {
+list-style: none; margin: 5px;
+
+}
+.grid tr.dragsortable td{
+	-moz-user-select:none;
+	border-bottom:1px solid #333;
+}
+.grid tr.dragsortable td.hover{
+	border-bottom:1px solid #049cdb;
+}
+.grid tr.placeHolder td{
+	border-bottom:1px solid #049cdb;
+}
+.table .grid tr.dragObj td{
+	background: #049cdb;
+}
+
+#dragBox{display: none; position: absolute;}
+</style>
+<div class="row-fluid">
+	<div class="span3">
+		<div class="panel">
+			<div class="panelHeader">
+				<div class="panelHeaderContent">
+					<h1 style="font-size: 14px;">节点列表</h1>
+				</div>
+			</div>
+			<div class="panelContent">
+				<ul class="tree">
+
+					<li>
+						<a href="__URL__/index/id/{$level1.id}">
+							<i class="icon-folder-open"></i>
+							&nbsp;所有节点
+						</a>
+						<ul>
+							<Foreach name="allNode" item="level1">
+							<li>
+								<a href="__URL__/index/id/{$level1.id}">
+									<i class="icon-folder-open"></i>
+									&nbsp;{$level1.name}.{$level1.viewName}
+								</a>
+								<notempty name="level1.child">
+								<ul>
+									<Foreach name="level1.child" item="level2">
+									<li>
+										<a href="__URL__/index/id/{$level2.id}">
+											<i class="icon-list-alt"></i>
+											&nbsp;{$level2.name}.{$level2.viewName}
+										</a>
+										<notempty name="level2.child">
+										<ul style="display: none;">
+											<Foreach name="level2.child" item="level3">
+											<li>
+												<a href="__URL__/edit/id/{$level3.id}">{$level3.name}.{$level3.viewName}</a>
+											</li>
+											</Foreach>
+										</ul>
+										</notempty>
+									</li>
+									</Foreach>
+								</ul>
+								</notempty>
+							</li>
+							</Foreach>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="panelFooter">
+				<div class="panelFooterContent"></div>
+			</div>
+		</div>
+	</div>
+	<div class="span9">
+		<div id="toolbar" class="clearfix">
+			<form method="get" action="" id="list-filter" class="form-inline">
+				<div class="items first relative">
+					<div class="controls">
+						<button class="btn dialog"
+							href="__URL__/add/id/<?php echo $_GET['id'];?>" w="868px"
+							h="480px" t="20px" l="20px">
+							<i class="icon-plus"></i>
+							新增节点
+						</button>
+						<input type="button" name="buildNode" class="btn" value="自动生成节点"
+							onclick="javascript:window.location='{:U('Node/buildNode')}'" />
+						<input type="button" name="sortTable" class="btn sortTable" value="设置排序" />
+					</div>
+				</div>
+
+				<div class="items fr">
+					<div class="controls">
+						<div class="input-append">
+							<input class="span2" id="appendedPrependedInput" size="16"
+								type="text">
+							<a class="btn btn-primary">
+								<i class="icon-search"></i>
+								搜索
+							</a>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<form action="__URL__/exec" method="post" class="form-horizontal"
+			id="list-form">
+			<div id="table" class="fl">
+				<table cellspacing="0"
+					class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr class="sortable" sort="{$sort}" sortImg="{$sortImg}"
+							currentOrder="{$order}" params="{$params}">
+							<th width="25" class="first">
+								<input name="checkbox" type="checkbox" class="checkbox"
+									id="selectAll" value="选择">
+							</th>
+							<th order="name" width="10%">节点名</th>
+							<th order="viewName" width="15%">显示名</th>
+							<th width="10%">描述</th>
+							<th width="10%">节点等级</th>
+							<th order="orders" width="10%">排序</th>
+							<th order="type" width="13%">菜单显示</th>
+							<th class="last">操作</th>
+						</tr>
+					</thead>
+					<tbody class="grid">
+						<volist name="list" id="vo">
+						<tr>
+							<td width="25" class="first" align="center">
+								<input name="id[]" type="checkbox" id="id[]" value="{$vo.id}"
+									class="checkbox">
+							</td>
+							<td>
+								<a href="__URL__/index/id/{$vo.id}">{$vo.name}</a>
+								&nbsp;
+							</td>
+							<td>
+								<a href="__URL__/index/id/{$vo.id}">{$vo.viewName}</a>
+								&nbsp;
+							</td>
+							<td>{$vo.description}&nbsp;</td>
+							<td>{$vo.level|echoNodeLevel}&nbsp;</td>
+							<td>
+								<a href="__URL__/index/id/{$vo.id}">{$vo.orders}</a>
+								&nbsp;
+							</td>
+							<td>
+								<eq name="vo['type']" value="1"> <img
+									src="../Public/images/correct.gif" alt="Edit" title="状态" /></eq>
+								&nbsp;
+							</td>
+							<td>
+								<a href="__URL__/edit/id/{$vo.id}" class="btn btn-mini dialog"
+									w="778px" h="480px" t="10px" l="10px">
+									<i class="icon-edit"></i>
+									编辑
+								</a>
+								<a href="__URL__/exec/act/delete/id/{$vo.id}"
+									class="confirm btn btn-danger btn-mini ">
+									<i class="icon-trash icon-white"></i>
+									删除
+								</a>
+								<eq name="vo['status']" value="1"> <a
+									href="__URL__/exec/act/lock/id/{$vo.id}" class="btn btn-mini ">
+									<i class="icon-lock"></i>
+									锁定
+								</a></eq>
+								<eq name="vo['status']" value="0"> <a
+									href="__URL__/exec/act/unlock/id/{$vo.id}" class="btn">
+									<i class="icon-unlock"></i>
+									解锁
+								</a></eq>
+							</td>
+						</tr>
+						</volist>
+					</tbody>
+					<tfoot>
+						<tr class="last">
+							<td colspan="8">
+								<div class="fl">
+									<select name="act" class="input-small">
+										<option value="none" selected>批量操作</option>
+										<option value="unlock">解锁</option>
+										<option value="lock">锁定</option>
+										<option value="delete">删除</option>
+									</select>
+									<input type="submit" value="提交操作" class="btn" id="submitButton" />
+								</div>
+								<div class="select green-black">{$page}</div>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</form>
+		<div class="clear"></div>
+	</div>
+</div>
+
+</div>
+</div>
+<div class="here"></div>
+<script type="text/javascript" language="javascript"
+	src="__PUBLIC__/Js/dwz/js/dwz.core.js"></script>
+<script type="text/javascript" language="javascript"
+	src="__PUBLIC__/Js/dwz/js/dwz.ui.js"></script>
+<script type="text/javascript" language="javascript"
+	src="__PUBLIC__/Js/dwz/js/dwz.tree.js"></script>
+<script type="text/javascript" language="javascript"
+	src="__PUBLIC__/Js/jquery-ui-1.9.2.custom.min.js"></script>
+<script type="text/javascript" language="javascript">
+
+	$(document).ready(function() {
+		//$("ul.tree").jTree();
+		$(".sortTable").click(function(){
+			if($('.grid tr').hasClass("dragsortable")){
+				$('.grid tr').removeClass("dragsortable");
+				$('.dragsortable').die();
+			}else{
+				var draging = false;
+				var tmp = '';
+				var dragBox = '';
+				var $dragObj ='';
+				var $dragBox = '';
+				var dx,dy,dragObjPosition;
+				document.onselectstart = function(){return false;}
+				$('.grid tr').addClass("dragsortable");
+				$( '.grid').sortable();
+				$( '.grid' ).disableSelection();
+				/*$('.dragsortable').live('mousedown',function(e){
+					$dragObj = $(this);
+					tmp = '<tr class="dragsortable">'+$dragObj.html()+'</tr>';
+					dragBox = '<div id="dragBox" ><table class="table table-striped table-bordered table-condensed"><tr class="dragTr">'+$dragObj.html()+'</tr></table></div>';
+					
+					draging=true;
+					$dragObj.find('td').addClass("hover");
+					$dragObj.addClass('dragObj');
+					dragObjPosition = $dragObj.position();
+					dx = e.clientX;
+					dy = e.clientY;
+					$('#dragBox').remove();
+					$dragObj.append(dragBox);
+					$dragBox =  $('#dragBox');
+					$dragBox.css({'left':dragObjPosition.left,
+									'top':dragObjPosition.top,
+									'width':$dragObj.css('width')});
+					$dragBox.show();
+				}).live('mouseup',function(e){
+					console.log('table mouseup');
+					if(draging){
+						if( !$(this).hasClass('dragObj')){
+							$('.placeHolder').remove();
+						}
+					}
+					draging=false;
+					$(tmp).insertAfter(this);
+					$(this).find('td').removeClass("hover");
+					$dragObj.removeClass('dragObj');
+
+					$dragObj.remove();
+					$dragBox.remove();
+					return false;
+				}).live('mousemove',function(e){
+					if(draging){
+						$('.dragTr').die();
+					console.log('table mousemove');
+					// console.log($(event.target));
+					console.log($(this).find('input[name="id[]"]').val());
+					// if(draging){
+					// 	if( !$(this).hasClass('dragObj')){
+					// 		var colspan  = $(this).children().length-1;
+					// 		$('<tr class="placeHolder"><td colspan="'+colspan+'">&nbsp;<td></tr>').insertAfter(this);
+					// 	}
+					}
+					// $('#dragBox').css('left',dragObjPosition.left-10 - (dx - e.clientX));
+					// $('#dragBox').css('top', dragObjPosition.top-30 - (dy - e.clientY));
+					$(this).find('td').addClass("hover");
+					// e.stopPropagation();
+					if(draging){
+						// console.log(parseInt($('#dragBox').css('left'))+ (dx - e.clientX));
+						// console.log( parseInt($('#dragBox').css('top')) - (dy - e.clientY));
+						$dragBox.css({
+							'left':dragObjPosition.left - (dx - e.clientX),
+							'top' :dragObjPosition.top - (dy - e.clientY)
+						});
+					}
+					return false;
+				}).live('mouseout',function(e){
+					// console.log('table mouseout');
+					// if(draging){
+					// 	if( !$(this).hasClass('dragObj')){
+					// 		$('.placeHolder').remove();
+					// 	}
+					// }
+					$(this).find('td').removeClass("hover");
+					e.stopPropagation();
+				});
+				$(document).live('mouseup',function(e){
+					console.log('document mouseup');
+					console.log($(event.target));
+					if(draging){
+						$dragBox.remove();
+					}
+					// e.stopPropagation();
+				}).live('mousemove',function(e){
+					if(draging){
+						// console.log(parseInt($('#dragBox').css('left'))+ (dx - e.clientX));
+						// console.log( parseInt($('#dragBox').css('top')) - (dy - e.clientY));
+						$dragBox.css({
+							'left':dragObjPosition.left - (dx - e.clientX),
+							'top' :dragObjPosition.top - (dy - e.clientY)
+						});
+					}
+				});
+				$('#dragBox').live('mouseover',function(e){
+					console.log('dragBox mouseover');
+
+					e.stopPropagation();
+				});*/
+			}
+			
+		})
+	});
+</script>
+<include file="Public:footer" />

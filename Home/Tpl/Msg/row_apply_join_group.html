@@ -1,0 +1,12 @@
+				<li class="height50 paddingtop5">
+					<img src="{$msg.sender_icon_id|getIconUrl}" class="floatleft userhead" />
+					<div class="floatleft marginleft10 height40_20">
+						<label class="fontcolor4c9ed9">{$msg.sender_name}</label><label>申请加入组“{:getGroupName($msg['msg_rel_id'])}”</label><label class="fontcolor999 paddingleft20">{$msg.sender_name|datetime='dt',###}</label><br />
+						<label class="fontcolor999">
+							{$msg.msg_content}
+						</label>
+
+					</div>
+					<label class="detailc floatright margintop10 marginleft10 msgchecked" apilink="{:U('Msg/checked', array('id' => $msg['msg_id']))}">拒绝</label>
+					<label class="detail floatright margintop10 msgpass" apilink="{:U('Msg/pass', array('id' => $msg['msg_id']))}">通过</label>
+				</li>

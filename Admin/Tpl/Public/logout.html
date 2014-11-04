@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
+<title>{$Think.config.app_name}</title>
+<link rel="stylesheet" href="../Public/style/main.css" type="text/css" media="all" />
+
+</head>
+<body>
+<div id="append"></div>	<div class="container">
+	<div class="ajax rtninfo">
+		<div class="ajaxbg">
+			<h4>操作失败</h4>
+			<p><font color="red">登录已超时</font></p>
+			<p><span style="color:blue;font-weight:bold" id="tiao">3</span> <a href="javascript:countDown"></a>秒后自动跳转,如果不想等待,直接点击 <A HREF="{$jumpUrl}" target="_top">这里跳转</A> </p>
+				
+		</div>
+	</div>
+</div>
+
+<!--脚本开始-->
+
+<script language="javascript">
+function countDown(secs){
+	tiao.innerText=secs;
+	if(--secs>0){
+		setTimeout("countDown("+secs+")",1000);
+	}else{
+		parent.location.href="{$jumpUrl}"
+	}
+}
+ countDown(3);
+
+</script>

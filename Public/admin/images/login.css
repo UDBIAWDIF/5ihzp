@@ -1,0 +1,10 @@
+body{margin:0; padding:0; font-size:9pt;}
+#login{margin:auto; width:500px; height:auto; margin-top:120px;}
+.radius{border-radius:5px;}
+
+#center{background:#32383e url(index_08.gif) left 30px no-repeat;border: 1px solid #c1c1c1; text-align: center;height: 300px;}
+.inputarea{height: 40px; line-height: 40px; color:#fff;}
+.margintop90{margin-top: 90px;}
+.inputtext{width:150px; height:18px; border:solid 1px #aca7a7; font-size:9pt; padding:3px 5px;}
+.btn{text-align:center; padding-left:186px; margin-top:6px;}
+.btn input{display:block; height:28px; line-height:25px; background: url(bt_bg.gif); border: solid 1px #b6b6b6; width:100px; text-decoration:none; color:#000;}

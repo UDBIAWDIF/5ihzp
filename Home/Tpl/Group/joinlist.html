@@ -1,0 +1,39 @@
+﻿<include file="Public:manage_common" />
+					<li class="height24_24 radius tabli" id="liimgmanage"><label><a href="{:U('Pic/manage')}">照片管理</a></label></li>
+					<li class="height24_24 margintop10 cur000 radius tabli" id="ligroupmanage"><label>组管理</label></li>
+				</ul>
+			</div>
+			<div class="imglist marginleft20 marginbottom10" style="width:710px;float:left;">
+				<ul id="ulgroup">
+					<li class="margintopbottom10 bold"><label class="marginright20">创建组：{:userCountGroup()}({:userSumGroupFriend()})</label><label class="marginleft20">加入组：{:userCountJoinGroup()}</label><a class="subadd floatright marginleft10 radius">用户请求(8)</a><a class="subadd floatright radius" onclick="javascript:openForm('dialogaddgroup','创建组',600,400,'')">+&nbsp;创建组</a></li>
+					<li class="margintopbottom10"><a class="subadd150c" id="amygroup" href="{:U('Group/manage')}">我创建的组</a><a class="subadd150 marginleft10" id="aijoin" href="{:U('Group/joinlist')}">我加入的组</a></li>
+
+				<volist name="grouplist" id="group">
+					<li class="height70 paddingtop5 topborder1">
+						<img src="{$group.g_icon_id|getIconUrl}" class="floatleft userhead1" />
+						<div class="floatleft marginleft10 height40_20">
+							<label>组名：</label><label class="fontcolor4c9ed9">{$group.g_name}</label><label class="paddingleft20">ID：{$group.g_id}</label><label class="fontcolor999 paddingleft20">{$group.g_createtime|datetime='dt',###}</label><br />
+							<label class="fontcolor999">
+								{$group.g_description}
+							</label><br />
+							<label class="fontcolor999">
+								成员数：{$group.g_user_count}
+							</label>
+						</div>
+					</li>
+				</volist>
+
+				</ul>
+			</div>
+			<div class="page"><a>&laquo;</a><a>1</a><a>2</a><a>&raquo;</a></div>
+		</div>
+<include file="Public:aboutus" />
+	</div>
+	<div id="dialogmodify" style="display: none;">
+		<iframe name='dialogmodify' src="{:U('User/modify')}" marginheight='0' frameborder='0' scrolling='no'
+				width='570' height='350'></iframe>
+	</div>
+<include file="Public:usermsg" />
+
+</body>
+</html>

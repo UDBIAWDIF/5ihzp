@@ -1,0 +1,145 @@
+<include file="Public:head" />
+	<link href="__PUBLIC__/Js/kindeditor/themes/default/default.css" rel="stylesheet" />
+	<script type="text/javascript">
+		var userRegionId = '{$user.u_region_id}';
+	</script>
+	<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/lang/zh_CN.js"></script>
+	<script type="text/javascript">
+	var thisServerImgPre = '{$Think.config.image_server_url}';
+	KindEditor.ready(function(K) {
+		var uploadbutton = K.uploadbutton({
+			button:		K('#uploadIconButton')[0],
+			fieldName:	'imgFile',
+			url:		'{:u("User/setHead")}',
+			beforeSubmit: loading,
+			afterUpload: function(data) {
+				tips.close();
+				if (data.error === 0) {
+					// var url = K.formatUrl(data.url, 'absolute');
+					var url = data.url;
+					K('#icon_path').val(url);
+					K('#userhead').attr('src', realUrl(url));
+				} else {
+					alert(data.message);
+				}
+			},
+			afterError: function(str) {
+				alert('上传失败, 原因: ' + str);
+			}
+		});
+		uploadbutton.fileBox.change(function(e) {
+			uploadbutton.submit();
+		});
+	});
+
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function realUrl(url) {
+		url = url.toString();
+		if(!isUrl(url)) {
+			url = thisServerImgPre + url;
+		}
+		return url;
+	}
+
+	$(function() {
+		$('input[name="modifypassword"]')[0].value = '';
+		$('select[name="region_id"]').val({$user.u_region_id});
+	});
+
+	</script>
+</head>
+<body>
+	<div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;">
+		<form id="form_reg" class="ajaxForm" method="POST" action="{:U('User/modify')}" notip="1" parentrefresh="1"><div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;" id="reg">
+			<div class="dialogshow floatleft">
+				<ul class="height40">
+					<li class="floatleft left">
+						用户名：
+					</li>
+					<li class="floatleft right">
+						<input type="text" name="name" value="{$user.u_name}" disabled="disabled" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						设置密码：
+					</li>
+					<li class="floatleft right">
+						<input type="password" name="modifypassword" value="" placeholder="输入密码" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						确认密码：
+					</li>
+					<li class="floatleft right">
+						<input type="password" name="repassword" value="" placeholder="再次输入密码" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						地区：
+					</li>
+					<li class="floatleft right">
+<PHP>$regionParentId = getRegionParentId($user['u_region_id']);</PHP>
+						<select class="regionlevel" level="1" action="{:U('Region/queryChildren')}">
+							<volist name="regionLevel1" id="region">
+								<option value="{$region.region_id}" <eq name="region.region_id" value="$regionParentId">selected="selected"</eq>>{$region.region_name}</option>
+							</volist>
+						</select>
+						<select name="region_id" require="true" datatype="integer"  class="regionlevel" level="2"></select>
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						邮箱：
+					</li>
+					<li class="floatleft right">
+						<input type="text" name="email" value="{$user.u_email}" placeholder="输入邮箱" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						签名：
+					</li>
+					<li class="floatleft right">
+						<input type="text" name="sign" value="{$user.u_sign}" placeholder="输入签名" />
+					</li>
+				</ul>
+			</div>
+			<div style="width: 120px;" class="floatleft">
+				<ul class="height40">
+					<li class="alignleft">头像</li>
+				</ul>
+				<ul class="">
+					<li>
+						<img id="userhead" src="{:getCurrentUserHead()}" width="120" class="border1 padding1" />
+						<input type="hidden" name="icon_path" id="icon_path" value="" />
+					</li>
+				</ul>
+				<ul class="height30">
+					<li class="alignright"><input type="button" id="uploadIconButton" value="上传" /></li>
+				</ul>
+			</div>
+			<div style="display:block; position:absolute; bottom:0; right:0;">
+				<ul>
+					<li class="floatright" style="width:400px;">
+						<label class="cancel floatright" onclick="javascript:window.parent.location.reload();">取消</label>
+						<input class="sub floatright" type="submit" value="确定" />
+					</li>
+				</ul>
+			</div>
+		</div></form>
+	</div>
+</body>
+</html>

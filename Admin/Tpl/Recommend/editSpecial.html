@@ -1,0 +1,172 @@
+<include file="Public:header" />
+<script type="text/javascript" src="../Public/kindeditor/kindeditor.js"></script>
+<script type="text/javascript" src="../Public/kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript">
+var editor;
+var thisServerUrl = '{$thisServerUrl}';
+
+KindEditor.ready(function(K) {
+	editor = K.create('');
+	//处理ICON上传
+	var editorIcon = K.editor({
+		allowFileManager : false,
+		uploadJson : '{:U("Recommend/uploadIcon")}',
+		formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+	});
+	
+	K('#uploadIcon').click(function() {
+		editorIcon.loadPlugin('insertfile', function() {
+			editorIcon.plugin.fileDialog({
+				fileUrl : K('#rm_icon').val(),
+				clickFn : function(url, title) {
+					$("#rm_icon").val(url);
+					$("#rm_icon_url").show().attr("src","{$base_url}"+url);
+					editorIcon.hideDialog();
+				}
+			});
+		});
+	});
+	
+	K('#delIcon').click(function() {
+		$("#rm_icon").val("");
+		$("#rm_icon_url").hide().attr("src","");
+	});
+	
+	var editorCover = K.editor({
+		allowFileManager : false,
+		uploadJson : '{:U("Recommend/uploadCover")}',
+		formatUploadUrl : false,	//不格式化上传后的文件路径(不会被格式化成URL)
+	});
+	
+	K('#uploadCover').click(function() {
+		editorCover.loadPlugin('insertfile', function() {
+			editorCover.plugin.fileDialog({
+				fileUrl : K('#rm_cover').val(),
+				clickFn : function(url, title) {
+					$("#rm_cover").val(url);
+					$("#rm_cover_url").show().attr("src","{$base_url}"+url);
+					editorCover.hideDialog();
+				}
+			});
+		});
+	});
+	
+	K('#delCover').click(function() {
+		$("#rm_cover").val("");
+		$("#rm_cover_url").hide().attr("src","");
+	});
+});
+
+//判断是否可能是个标准URL链接
+function isUrl(url) {
+	var key = '://';
+	var position = url.indexOf(key);
+	if(position != -1 && position < 6) {
+		return true;
+	} else {
+		return false;
+	}
+}//end isUrl
+
+//如果 url 不是标准的 url ,默认为本站存储的文件
+function realUrl(url) {
+	url = url.toString();
+
+	if(!isUrl(url)) {
+		url = thisServerUrl + url;
+	}
+	return url;
+}
+$(function() {	
+	//处理封面、ICON域名  $('#app_cover_url').attr('src', realUrl(url));.
+	var imgIconUrl = "{$vo.rm_icon}";
+	var imgIcon = $('#rm_icon_url').attr('src', realUrl(imgIconUrl));
+});
+</script>
+
+<style type="text/css">
+ul{list-style: none;}
+</style>
+	<div id="table" >
+		<form action="__URL__/<empty name='vo.rm_id'>doAdd<else />doEdit</empty>" method="POST" id="mainform">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full">
+					<ul class="subsubsub">
+						<li><a class="current" >基本资料</a>&nbsp;|&nbsp;</li>
+						<li><a class="current" href="{:U('RecommendDetails/index')}/rid/{$vo.rm_id}">推荐应用（文章）</a>&nbsp;|&nbsp;</li>
+						<li><a class="current" href="{:U('RecommendDetails/add')}/rid/{$vo.rm_id}">添加应用（文章）</a></li>
+					</ul>
+				</th> 
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th width="20%">名称</td>
+				<td width="80%"><input type="text" name="rm_name" value="{$vo.rm_name|htmlspecialchars}" />*</td>
+			</tr>
+			<tr>
+				<th width="20%">位次</td>
+				<td width="80%"><input type="text" name="rm_position" value="{$vo.rm_position}" /></td>
+			</tr>
+			<!--
+			<tr>
+				<th width="20%">类型</td>
+				<td width="80%">
+					<select name="rm_ctype">
+						<option value="1" <if condition="'1' eq $vo['rm_ctype']">selected</if>>软件</option>
+						<option value="2" <if condition="'2' eq $vo['rm_ctype']">selected</if>>游戏</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">属性</td>
+				<td width="80%">
+					<select name="rm_rtype">
+						<option value="0" <if condition="'0' eq $vo['rm_rtype']">selected</if>>普通合辑</option>
+						<option value="1" <if condition="'1' eq $vo['rm_rtype']">selected</if>>手工推荐</option>
+					</select>
+				</td>
+			</tr>
+		-->
+			<tr>
+				<th width="20%">合辑ICON</td>
+				<td width="80%">
+					<p><img src="{$vo.rm_icon_url}" id="rm_icon_url" class="imgLimitimg" <empty name="vo.rm_icon">style="display:none;"</empty>/></p>
+					<a href='javascript:void(0);' id="uploadIcon" class="btn">上传图片</a>&nbsp;&nbsp;
+					<a href="javascript:void(0);" id="delIcon" class="btn">删除图片</a>
+					<input type="hidden" id="rm_icon" name="rm_icon" value="{$vo.rm_icon}" />
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">合辑COVER</td>
+				<td width="80%">
+					<p><img src="{$vo.rm_cover}" id="rm_cover" class="imgLimitimg" <empty name="vo.rm_cover">style="display:none;"</empty>/></p>
+					<a href='javascript:void(0);' id="uploadCover" class="btn">上传图片</a>&nbsp;&nbsp;
+					<a href="javascript:void(0);" id="delCover" class="btn">删除图片</a>
+					<input type="hidden" id="rm_cover" name="rm_cover" value="{$vo.rm_cover}" />
+				</td>
+			</tr>
+			<tr>
+				<th width="20%">简介</td>
+				<td width="80%"><textarea name="rm_description" cols="80" rows="8" style="width: 600px;">{$vo.rm_description|htmlspecialchars}</textarea></td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary"  name="Submit" value="确定修改" />
+					<input type="button" class="btn btnClose" name="btnClose" value="返回" />
+					<input name="rm_id" type="hidden" id="id" value="{$vo.rm_id}" />
+					<input name="rm_ctype" type="hidden" id="id" value="2" />
+					<input name="rm_rtype" type="hidden" id="id" value="0" />
+					<input name="rm_os[]" type="hidden" id="id" value="3" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div>
+</div>
+
+<include file="Public:footer" />

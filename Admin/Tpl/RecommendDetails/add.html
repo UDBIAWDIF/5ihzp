@@ -1,0 +1,85 @@
+<include file="Public:header" />
+<script type="text/javascript">
+function rd_search(){
+	var a = [];
+	$("#loading").show();
+	a.push({name:'key',value:$('#key').val()});
+	a.push({name:'type',value:$('#type').val()});
+	a.push({name:'platform',value:$('#platform').val()});
+	$.post('__URL__/search',a,function(data){
+		$("#rd_list").find('tbody').html(data);
+		$("#loading").hide();
+	});
+}
+
+function scrollToTop() {
+	window.scrollTo(0,0);
+	$('input[name="id[]"]').attr('checked', false);
+}//end scrollToTop()
+
+</script>
+
+	<div id="table" >
+		<form action="__URL__/doAdd" method="POST" id="formcurrent" class="noReflesh form-inline" triggerfn="scrollToTop">
+		<table class="edit table table-hover" cellspacing="0">
+		<thead>
+			<tr>
+				<th colspan="2" class="full"></th> 
+			</tr>
+		</thead>
+		<tbody>
+			<tr><td>
+				<div id="toolbar"  class="clearfix">
+				<fieldset class="searchbar">
+					<input type="text" id="key" class="input-small"/>
+					<select id="type" name="type">
+						<option value="1">软件</option>
+						<option value="0">文章</option>
+					</select>
+					<select id="platform">
+						<option value="3">Android</option>
+						<option value="1">iPhone</option>
+						<option value="2">iPad</option>
+					</select>
+					<input type="button" value="搜索" onclick="rd_search();" class="btn" />
+					<span style="display:none;" id="loading"><img src="../Public/images/loading.gif" style="height:15px;"> Loading...</span>
+				</fieldset>
+				</div>
+				<div id="table" class="fl">
+				<table cellspacing="0" id="rd_list">
+					<thead>
+						<tr>
+							<th width="5"  class="first">
+								<input name="checkbox" type="checkbox" class="checkbox" id="selectAll" value="选择">
+							</th>
+							<th>ID</th>
+							<th align="left" >名称</th>
+							<th >说明</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+				</div>
+			</td></tr>
+			<tr>
+				<td align="center">
+					<input type="submit" class="btn" name="Submit" value="添加" class="inputButton" />&nbsp;
+					<a href="javascript:history.go(-1)" class="btn">返回</a>
+					<input name="rid" type="hidden" value="{$_REQUEST['rid']}" />
+				</td>
+			</tr>
+		</tbody>
+		</table>
+		</form>
+		</div>
+	</div><!-- end content -->
+	
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#formcurrent').submit(function(event) {
+		serializeSubmitForm(this, event,'提交成功');
+	});
+});
+</script>
+<include file="Public:footer" />

@@ -1,0 +1,125 @@
+<include file="Public:head" />
+	<link href="__PUBLIC__/Js/kindeditor/themes/default/default.css" rel="stylesheet" />
+	<script type="text/javascript">
+		var userRegionId = '{$group.g_region_id}';
+		var checkboxTagName = 'gptag[]';
+		var checkedTag = '{$checkedGroupTag}';
+	</script>
+	<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/kindeditor.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/Js/kindeditor/lang/zh_CN.js"></script>
+	<script type="text/javascript">
+	var thisServerImgPre = '{$Think.config.image_server_url}';
+	KindEditor.ready(function(K) {
+		var uploadbutton = K.uploadbutton({
+			button:		K('#uploadIconButton')[0],
+			fieldName:	'imgFile',
+			url:		'{:u("Group/setIcon")}',
+			beforeSubmit: loading,
+			afterUpload: function(data) {
+				tips.close();
+				if (data.error === 0) {
+					// var url = K.formatUrl(data.url, 'absolute');
+					var url = data.url;
+					K('#icon_path').val(url);
+					K('#groupicon').attr('src', realUrl(url));
+				} else {
+					alert(data.message);
+				}
+			},
+			afterError: function(str) {
+				alert('上传失败, 原因: ' + str);
+			}
+		});
+		uploadbutton.fileBox.change(function(e) {
+			uploadbutton.submit();
+		});
+	});
+
+	function isUrl(url) {
+		var key = '://';
+		var position = url.indexOf(key);
+		if(position != -1 && position < 6) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function realUrl(url) {
+		url = url.toString();
+		if(!isUrl(url)) {
+			url = thisServerImgPre + url;
+		}
+		return url;
+	}
+	</script>
+</head>
+<body>
+	<div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;">
+		<form id="form_login" class="ajaxForm" method="POST" action="{:U('Group/modify')}" notip="1" jumpurl="{:U('Group/manage')}" parentjump="1"><div style="margin: 0 auto; width: 550px; height: 300px; padding-top:10px;" id="reg">
+			<div class="dialogshow floatleft">
+				<ul class="height40">
+					<li class="floatleft left">
+						名称：
+					</li>
+					<li class="floatleft right">
+						<input type="text" name="g_name" value="{$group.g_name}" require="true" datatype="require" />
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						地区：
+					</li>
+					<li class="floatleft right">
+<PHP>$regionParentId = getRegionParentId($group['g_region_id']);</PHP>
+						<select class="regionlevel" level="1" action="{:U('Region/queryChildren')}">
+							<option value="0">请选择省份</option>
+							<volist name="regionLevel1" id="region">
+								<option value="{$region.region_id}" <eq name="region.region_id" value="$regionParentId">selected="selected"</eq>>{$region.region_name}</option>
+							</volist>
+						</select>
+						<select name="g_region_id" require="true" datatype="integer"  class="regionlevel" level="2"></select>
+					</li>
+				</ul>
+				<ul class="height40">
+					<li class="floatleft left">
+						说明：
+					</li>
+					<li class="floatleft right">
+						<textarea name="g_description" id="g_description" rows="10" cols="35" placeholder="请填写">{$group.g_description}</textarea>
+					</li>
+					<li class="floatleft left">TAG：</li>
+					<li class="floatleft left" style="width:300px;margin-left: -100px;">
+						<volist name="gptaglist" id="gptag">
+							<input type="checkbox" name="gptag[]" value="{$gptag.gt_id}" /><label for="Checkbox1">{$gptag.gt_name}</label>
+						</volist>
+					</li>
+				</ul>
+			</div>
+			<div style="width: 120px;" class="floatleft">
+				<ul class="height40">
+					<li class="alignleft">标志图片</li>
+				</ul>
+				<ul class="">
+					<li>
+						<img id="groupicon" src="{$group.g_icon_id|getIconUrl}" width="120" class="border1 padding1" />
+						<input type="hidden" name="icon_path" id="icon_path" value="" />
+					</li>
+				</ul>
+				<ul class="height30">
+					<li class="alignright"><input type="button" id="uploadIconButton" value="上传" /></li>
+				</ul>
+			</div>
+			<div style="display:block; position:absolute; bottom:0; right:0;">
+				<ul>
+					<li class="floatright" style="width:400px;">
+						<label class="cancel floatright" onclick="javascript:window.parent.location.reload();">取消</label>
+						<input type="hidden" name="g_id" value="{$group.g_id}" />
+						<input class="sub floatright" type="submit" value="确定" />
+					</li>
+				</ul>
+			</div>
+		</div></form>
+	</div>
+</body>
+</html>

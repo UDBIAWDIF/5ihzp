@@ -1,0 +1,16 @@
+<include file="Public:head" />
+
+<frameset rows="60,*" cols="*" frameborder="no" border="0" framespacing="0">
+	<frame src="__APP__/Menu/top" name="topFrame" scrolling="No" noresize="noresize" id="topFrame" />
+	<frameset rows="*" cols="188,*" framespacing="0" frameborder="no" border="0">
+		<frame src="__APP__/Menu/left" name="leftFrame" scrolling="No" noresize="noresize" id="leftFrame" />
+		<frameset rows="73,*" cols="*">
+			<frame src="__APP__/Menu/right_top" name="mainFrame" id="mainFrame" />
+			<frame src="{:U('User/index')}" name="bodyFrame" id="bodyFrame" />
+		</frameset>
+	</frameset>
+</frameset>
+<noframes></noframes>
+<body>
+</body>
+</html>

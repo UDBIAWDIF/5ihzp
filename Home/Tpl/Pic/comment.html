@@ -1,0 +1,5 @@
+								<volist name="commentlist" id="comment">
+									<li>
+										<img src="{$comment.u_icon_id|getUserHeadById}" width="24" /><label class="fontcolor007acc"><a href="{:U('User/piclist', array('uid' => $comment['u_id']))}"<NOTEMPTY name="linkToTop"> target="_top"</NOTEMPTY>>{$comment.u_name}</a></label>: {$comment.picc_content}<label class="fontcolor999">({$comment.picc_createtime|datetime='dt',###})</label>
+									</li>
+								</volist>

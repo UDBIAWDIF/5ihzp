@@ -1,0 +1,32 @@
+<include file="Public:header" />
+<!-- 主页面开始 -->
+
+<div class="panel">
+	<div class="panelHeader">
+		<div class="panelHeaderContent">
+			<h1 style="font-size:14px;">节点扫描结果</h1>
+		</div>
+	</div>
+	<div class="panelContent" >
+		<volist name="nodes" id="node">
+			<div class="">
+				{$node.name}/{$node.viewName}
+				<notempty name="node.child">
+					<ul>
+						<volist name="node.child" id="action">
+							<li>
+								{$action.name} / {$action.viewName}
+							</li>
+						</volist>
+					</ul>
+				</notempty>
+			</div>
+		</volist>
+	</div>
+	<div class="panelFooter">
+		<div class="panelFooterContent">
+		</div>
+	</div>
+</div>
+<!-- 主页面结束 -->
+<include file="Public:footer" />

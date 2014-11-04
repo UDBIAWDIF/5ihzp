@@ -1,0 +1,41 @@
+<include file="Public:head" />
+
+<body>
+	<div style="margin: 20px auto 0 auto; width: 550px; height: 300px; border: 1px solid #c1c1c1;">
+		<div class="padding10 heightli30 fontsize20">新增管理员</div>
+		<form action="{:U(MODULE_NAME . '/doAdd')}" method="post"><div class="dialogshow floatleft">
+			<ul class="height40">
+				<li class="floatleft left">管理员：</li>
+				<li class="floatleft right">
+					<input type="text" name="adm_realname" value="" />
+				</li>
+			</ul>
+			<ul class="height40">
+				<li class="floatleft left">账号：</li>
+				<li class="floatleft right">
+					<input type="text" name="adm_name" value="" />
+				</li>
+			</ul>
+			<ul class="height40">
+				<li class="floatleft left">密码：</li>
+				<li class="floatleft right">
+					<input type="password" name="adm_password" />
+				</li>
+			</ul>
+			<ul class="height40 margintop10">
+				<li class="floatleft left">&nbsp;</li>
+				<li class="floatleft right">
+					<input type="submit" class="linkbtnsub floatleft marginright10" id="btnSub" name="Submit" value="确定<empty name="vo.adm_id">添加<else />修改</empty>" />
+					<input type="button" class="linkbtn floatleft btnClose" name="btnClose" value="取消" />
+				</li>
+			</ul>
+		</div></form>
+	</div>
+<script type="text/javascript">
+	$(function() {
+		$('input[name="adm_name"]')[0].value = ' ';
+		$('input[name="adm_realname"]')[0].value = ' ';
+	});
+</script>
+</body>
+</html>
